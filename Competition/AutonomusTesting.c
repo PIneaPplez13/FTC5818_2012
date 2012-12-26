@@ -8,7 +8,7 @@
 #pragma config(Motor,  mtr_S1_C3_2,     rightFront,    tmotorTetrix, openLoop, encoder)
 #pragma config(Servo,  srvo_S1_C4_1,    arm,                  tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C4_2,    servo2,               tServoNone)
-#pragma config(Servo,  srvo_S1_C4_3,    servo3,               tServoNone)
+#pragma config(Servo,  srvo_S1_C4_3,    servo3,								tServoNone)
 #pragma config(Servo,  srvo_S1_C4_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
