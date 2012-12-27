@@ -1,5 +1,4 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
@@ -51,7 +50,7 @@ void initializeRobot(){
   nMotorEncoder[RightFront] = 0; //reset motor encoders on right drive motors
   nMotorEncoder[RightRear] = 0;
 
-  //servoTarget(ArmContRot) = ARM_RETRACTED_POS; //initialize servo to starting position
+  servo[ArmContRot] = 126; //initialize servo to starting position
 }
 
 int scaleForMotor(int joyValue, int maxSpeed){
@@ -87,7 +86,7 @@ void armControl(){
  	}else if(joy2Btn(DOWN_BTN)){ //&& ServoValue(ArmContRot) > ARM_RETRACTED_POS){
  		servo[ArmContRot] = 0;
  	}else{
- 		servo[ArmContRot] = 125;
+ 		servo[ArmContRot] = 126;
  	}
 
 }
