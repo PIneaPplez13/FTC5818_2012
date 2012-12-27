@@ -61,13 +61,13 @@ int scaleForMotor(int joyValue, int maxSpeed){
 	const float MAX_JOY_VALUE = 127.0;
 
 	//check to see if joystick was accidentally nudged
-	if(abs(joyValue) < DEADBAND){
+	if(abs(joyValue) <= DEADBAND){
 		return 0;
 	}
 
 	//calculate scaled value
 	int direction = joyValue / abs(joyValue); //this results in either 1 or -1
-	double ratio = pow(joyValue, 2) / pow(MAX_JOY_VALUE, 2);
+	float ratio = pow(joyValue, 2) / pow(MAX_JOY_VALUE, 2);
 	int scaledValue = (ratio * MAX_MOTOR_VALUE) * direction;
 
 	return scaledValue; //motor speed given to motor
