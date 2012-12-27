@@ -37,7 +37,7 @@ controller. Go figure?
 #define DEADBAND 10
 
 //THESE VALUES STILL NEED TO BE CALCULATED
-const int ARM_EXTENDED_POS = 255 * 4; //set arm servo positions
+const int ARM_EXTENDED_POS = 255 * 4; //set arm servoTarget positions
 const int ARM_RETRACTED_POS = 0;
 
 void initializeRobot(){
