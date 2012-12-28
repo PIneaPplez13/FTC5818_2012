@@ -51,6 +51,20 @@ void update()	{
 		writeDebugStream("\tRightFront:\t%i\n\tRightRear:\t%i", stp.step[stp.nSteps][2], stp.step[stp.nSteps][3]);
 		stp.nSteps++;
 	}
+	else if(joy1Btn(3))	{
+		nMotorEncoder[scissorLeft] = 0;
+		nMotorEncoder[scissorRight] = 0;
+
+		nxtDisplayCenteredTextLine(7, "ENC2 reset.");
+	}
+	else if(joy1Btn(4))	{
+		writeDebugStream("Scissor Motors:\n\tScissorLeft:\t%i\n\tScissorRight:\t%i", nMotorEncoder[scissorLeft], nMotorEncoder[scissorRight]);
+	}
+
+	motor[leftFront] = joy1_y1;
+	motor[leftRear] = joy1_y1;
+	motor[rightFront] = joy1_y2;
+	motor[rightRear] = joy1_y2;
 }
 
 task main()
