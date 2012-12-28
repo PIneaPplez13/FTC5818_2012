@@ -47,7 +47,7 @@ void update()	{
 		stp.step[stp.nSteps][3] = nMotorEncoder[rightRear] = 0;
 		nxtDisplayCenteredTextLine(7, "STP %i/64", stp.nSteps);
 		writeDebugStream("New step registered: %i/64", stp.nSteps);
-		writeDebugStream("\n\tLeftFront:\t%i\n\tLeftRear:\t%i", stp.step[stp.nSteps][0], stp.step[stp.nSteps][1]);
+		writeDebugStream("\tLeft Front:\t%i\n\tLeft Rear:\t%i", stp.step[stp.nSteps][0], stp.step[stp.nSteps][1]);
 		writeDebugStream("\tRightFront:\t%i\n\tRightRear:\t%i", stp.step[stp.nSteps][2], stp.step[stp.nSteps][3]);
 		stp.nSteps++;
 	}
