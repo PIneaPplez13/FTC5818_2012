@@ -3,33 +3,79 @@
 
 #include "drivers\hitechnic-sensormux.h"
 
-//port 1: HiTechnic IR Seeker V2 --Flipped
-//port 2: HiTechnic Force Sensor
-
-#include "drivers\hitechnic-irseeker-v2.h"
-#include "drivers\hitechnic-force.h"
-
-//http://www.robotc.net/forums/viewtopic.php?f=52&t=3873
+#include "drivers\hitechnic-irseeker-v2.h" //port 1: HiTechnic IR Seeker V2 --Flipped
+#include "drivers\hitechnic-force.h"       //port 2: HiTechnic Force Sensor
 
 #define irSeekerSensor msensor_S2_1
 #define forceSensor    msensor_S2_2
 
 task main(){
 
+	//forceSensor
 	int _force = 0;
+
+	//irSeekerSensor
 	int _direction = 0;
+	int acS1, acS2, acS3, acS4, acS5 = 0;
+	int maxSigRange = 0;
+
+	//SensorMux
 	bool need_batteries = false;
 
 	while(true){
 
+		eraseDisplay(); //for testing purposes only!!!
+
 		//returns: raw value of the sensor
 		_force = HTFreadSensor(forceSensor); //parameter: SMUX sensor port value
+
+		/* According to http://www.usfirst.org/sites/default/files/uploadedFiles/Robotics_Programs/FTC/FTC_Documents/ForceSensorTests.pdf,
+			the heavy ring has a raw value (different from an estimated force in grams) of approx. 530.
+			And the standard Ring-It-Up! ring has a raw value of approx. 440.
+			Reference this image (http://www.hitechnic.com/contents/media/ForceSensorChart.png) for the raw to force conversion.
+		*/
 
 		//returns: value of 0-9, the direction index of the detected IR signal or -1 if an error occurred
 		_direction = HTIRS2readACDir(irSeekerSensor); //parameter: SMUX sensor port value
 
+		/* Here's the difficult part.
+			http://www.chiefdelphi.com/forums/showthread.php?p=1194083
+			We have a lot of work ahead of us. According to this, we need to do two things:
+				-	angle the irSeekerSensor downwards to achieve the best reading
+				-	use signal strength to assist in determining the position of the beacon
+			My attempts at both are listed below.
+		*/
+
+		bool irStrengthBuffer = HTIRS2readAllACStrength(irSeekerSensor, acS1, acS2, acS3, acS4, acS5);
+		//we now use the signal strength and direction of the IR signal to find the beacon
+		if(_direction == 3 || _direction == 4){
+			nxtDisplayBigTextLine(0, "choose left");
+		}else if(_direction == 6 || _direction == 4){
+			nxtDisplayBigTextLine(0, "choose right");
+		}else{
+			nxtDisplayBigTextLine(0, ""); //if beacon is too far away
+		}
+
+		//find the max signal strength
+		//CODE TAKE FROM: http://tinyurl.com/cxbzxwq
+		maxSigRange = (acS1 > acS2) ? acS1 : acS2;
+		maxSigRange = (maxSigRange > acS3) ? maxSigRange : acS3;
+		maxSigRange = (maxSigRange > acS4) ? maxSigRange : acS4;
+		maxSigRange = (maxSigRange > acS5) ? maxSigRange : acS5;
+
+		//make _direction value of 0 straight ahead
+		_direction -= 5;
+
+		//how far away if the beacon
+		if(maxSigRange > 10){
+			nxtDisplayBigTextLine(1, "close");
+		}else{
+			nxtDisplayBigTextLine(1, "far");
+		}
+
 		//returns: true if there is a power source problem
-		need_batteries = HTSMUXreadPowerStatus(S1); //parameter: the SMUX port number
+		need_batteries = HTSMUXreadPowerStatus(SensorMux); //parameter: the SMUX port number
+		//SEE #pragma TO FIND PARAMETERS!!!
 		//SEARCH YOUR COMPUTER FOR THIS FILE IF YOU NEED MORE INFO:
 		//group__htsmux.html
 
