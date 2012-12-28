@@ -16,18 +16,21 @@ task main(){
 
 	//irSeekerSensor
 	int _direction = 0;
-	int acS1, acS2, acS3, acS4, acS5 = 0;
+	//int acS1, acS2, acS3, acS4, acS5 = 0;
 	int maxSigRange = 0;
 
 	//SensorMux
 	bool need_batteries = false;
+	eraseDisplay(); //for testing purposes only!!!
 
 	while(true){
 
-		eraseDisplay(); //for testing purposes only!!!
+
 
 		//returns: raw value of the sensor
 		_force = HTFreadSensor(forceSensor); //parameter: SMUX sensor port value
+		nxtDisplayBigTextLine(1, "%i", _force);
+
 
 		/* According to http://www.usfirst.org/sites/default/files/uploadedFiles/Robotics_Programs/FTC/FTC_Documents/ForceSensorTests.pdf,
 			the heavy ring has a raw value (different from an estimated force in grams) of approx. 530.
@@ -36,7 +39,7 @@ task main(){
 		*/
 
 		//returns: value of 0-9, the direction index of the detected IR signal or -1 if an error occurred
-		_direction = HTIRS2readACDir(irSeekerSensor); //parameter: SMUX sensor port value
+		//_direction = HTIRS2readACDir(irSeekerSensor); //parameter: SMUX sensor port value
 
 		/* Here's the difficult part.
 			http://www.chiefdelphi.com/forums/showthread.php?p=1194083
@@ -46,35 +49,35 @@ task main(){
 			My attempts at both are listed below.
 		*/
 
-		bool irStrengthBuffer = HTIRS2readAllACStrength(irSeekerSensor, acS1, acS2, acS3, acS4, acS5);
+		//bool irStrengthBuffer = HTIRS2readAllACStrength(irSeekerSensor, acS1, acS2, acS3, acS4, acS5);
 		//we now use the signal strength and direction of the IR signal to find the beacon
-		if(_direction == 3 || _direction == 4){
-			nxtDisplayBigTextLine(0, "choose left");
-		}else if(_direction == 6 || _direction == 4){
-			nxtDisplayBigTextLine(0, "choose right");
-		}else{
-			nxtDisplayBigTextLine(0, ""); //if beacon is too far away
-		}
+		//if(_direction == 3 || _direction == 4){
+		//	nxtDisplayBigTextLine(0, "choose left");
+		//}else if(_direction == 6 || _direction == 4){
+		//	nxtDisplayBigTextLine(0, "choose right");
+		//}else{
+		//	nxtDisplayBigTextLine(0, ""); //if beacon is too far away
+		//}
 
 		//find the max signal strength
 		//CODE TAKE FROM: http://tinyurl.com/cxbzxwq
-		maxSigRange = (acS1 > acS2) ? acS1 : acS2;
-		maxSigRange = (maxSigRange > acS3) ? maxSigRange : acS3;
-		maxSigRange = (maxSigRange > acS4) ? maxSigRange : acS4;
-		maxSigRange = (maxSigRange > acS5) ? maxSigRange : acS5;
+		//maxSigRange = (acS1 > acS2) ? acS1 : acS2;
+		//maxSigRange = (maxSigRange > acS3) ? maxSigRange : acS3;
+		//maxSigRange = (maxSigRange > acS4) ? maxSigRange : acS4;
+		//maxSigRange = (maxSigRange > acS5) ? maxSigRange : acS5;
 
 		//make _direction value of 0 straight ahead
-		_direction -= 5;
+		//_direction -= 5;
 
 		//how far away if the beacon
-		if(maxSigRange > 10){
-			nxtDisplayBigTextLine(1, "close");
-		}else{
-			nxtDisplayBigTextLine(1, "far");
-		}
+		//if(maxSigRange > 10){
+		//	nxtDisplayBigTextLine(1, "close");
+		//}else{
+		//	nxtDisplayBigTextLine(1, "far");
+		//}
 
 		//returns: true if there is a power source problem
-		need_batteries = HTSMUXreadPowerStatus(SensorMux); //parameter: the SMUX port number
+		//need_batteries = HTSMUXreadPowerStatus(SensorMux); //parameter: the SMUX port number
 		//SEE #pragma TO FIND PARAMETERS!!!
 		//SEARCH YOUR COMPUTER FOR THIS FILE IF YOU NEED MORE INFO:
 		//group__htsmux.html
