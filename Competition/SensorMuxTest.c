@@ -23,10 +23,10 @@ task main(){
 	while(true){
 
 		//returns: raw value of the sensor
-		_force = HTFreadSensor(S2); //parameter: SMUX sensor port value
+		_force = HTFreadSensor(forceSensor); //parameter: SMUX sensor port value
 
 		//returns: value of 0-9, the direction index of the detected IR signal or -1 if an error occurred
-		_direction = HTIRS2readACDir(S1); //parameter: SMUX sensor port value
+		_direction = HTIRS2readACDir(irSeekerSensor); //parameter: SMUX sensor port value
 
 		//returns: true if there is a power source problem
 		need_batteries = HTSMUXreadPowerStatus(S1); //parameter: the SMUX port number
