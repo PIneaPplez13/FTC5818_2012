@@ -3,8 +3,8 @@
 
 #include "drivers\hitechnic-sensormux.h"
 
-//port 1: IRSeeker, v.2 --Flipped
-//port 2: Force
+//port 1: HiTechnic IR Seeker V2 --Flipped
+//port 2: HiTechnic Force Sensor
 
 #include "drivers\hitechnic-irseeker-v2.h"
 #include "drivers\hitechnic-force.h"
@@ -17,11 +17,22 @@
 task main(){
 
 	int _force = 0;
-	int _direection = 0;
+	int _direction = 0;
+	bool need_batteries = false;
 
 	while(true){
 
-		//...
+		//returns: raw value of the sensor
+		_force = HTFreadSensor(S2); //parameter: SMUX sensor port value
+
+		//returns: value of 0-9, the direction index of the detected IR signal or -1 if an error occurred
+		_direction = HTIRS2readACDir(S1); //parameter: SMUX sensor port value
+
+		//returns: true if there is a power source problem
+		need_batteries = HTSMUXreadPowerStatus(S1); //parameter: the SMUX port number
+		//SEARCH YOUR COMPUTER FOR THIS FILE IF YOU NEED MORE INFO:
+		//group__htsmux.html
+
 
 	}
 
