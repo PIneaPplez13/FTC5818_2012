@@ -64,17 +64,16 @@ void update()	{
 	}
 	else if(joy1Btn(4) && doUpdate)	{
 		writeDebugStream("Scissor Motors:\n\tScissorLeft:\t%i\n\tScissorRight:\t%i", nMotorEncoder[scissorLeft], nMotorEncoder[scissorRight]);
-		doUpdate == false;
+		doUpdate = false;
+	}
+	else if(!doUpdate && (joy1Btn(1) || joy1Btn(2) || joy1Btn(3) || joy1Btn(4)))	{
+		doUpdate = true;
 	}
 
 	motor[leftRear] = calcMotorDrive(joystick.joy1_y1, 100);
 	motor[leftFront] = calcMotorDrive(joystick.joy1_y1, 100);
 	motor[rightRear] = calcMotorDrive(joystick.joy1_y2, 100);
 	motor[rightFront] = calcMotorDrive(joystick.joy1_y2, 100);
-
-	else if(!doUpdate && (joy1Btn(1) || joy1Btn(2) || joy1Btn(3) || joy1Btn(4)))	{
-		doUpdate == true;
-	}
 
 	if(joy1Btn(10))	{
 		cont = false;
