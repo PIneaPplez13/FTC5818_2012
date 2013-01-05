@@ -19,7 +19,7 @@
 typedef struct {
 	string name;
 	int nSteps;
-	int step[64][4];
+	long step[64][4];
 } tStepArray;
 
 tStepArray stp;
