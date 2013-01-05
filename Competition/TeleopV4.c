@@ -18,15 +18,15 @@
 #include "JoystickDriver.c" //to handle Bluetooth messages
 
 //logitech controller mapping
-#define    UP_BTN 3
-#define  DOWN_BTN 1
-#define  LEFT_BTN 0
-#define RIGHT_BTN 2
+#define    UP_BTN 4
+#define  DOWN_BTN 2
+#define  LEFT_BTN 1
+#define RIGHT_BTN 3
 
-#define L1 5
-#define L2 7
-#define R1 4
-#define R2 6
+#define L1 6
+#define L2 8
+#define R1 5
+#define R2 7
 
 //we don't want the deadband to be too much
 #define DEADBAND 10

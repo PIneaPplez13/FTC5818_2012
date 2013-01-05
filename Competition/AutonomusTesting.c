@@ -24,6 +24,7 @@ typedef struct {
 
 tStepArray stp;
 bool cont = true;
+bool doUpdate = true;
 int _nSteps;
 
 int calcMotorDrive(int joy, int adj)	{
@@ -44,7 +45,7 @@ void update()	{
 
 		nxtDisplayCenteredTextLine(7, "ENC reset.");
 	}
-	else if(joy1Btn(2))	{
+	else if(joy1Btn(2) && doUpdate)	{
 		stp.step[stp.nSteps][0] = nMotorEncoder[leftFront];// = 0;
 		stp.step[stp.nSteps][1] = nMotorEncoder[leftRear];// = 0;
 		stp.step[stp.nSteps][2] = nMotorEncoder[rightFront];// = 0;
@@ -55,20 +56,25 @@ void update()	{
 		writeDebugStream("\tRightFront:\t%i\n\tRightRear:\t%i", stp.step[stp.nSteps][2], stp.step[stp.nSteps][3]);
 		stp.nSteps++;
 	}
-	else if(joy1Btn(3))	{
+	else if(joy1Btn(3) && doUpdate)	{
 		nMotorEncoder[scissorLeft] = 0;
 		nMotorEncoder[scissorRight] = 0;
 
 		nxtDisplayCenteredTextLine(7, "ENC2 reset.");
 	}
-	else if(joy1Btn(4))	{
+	else if(joy1Btn(4) && doUpdate)	{
 		writeDebugStream("Scissor Motors:\n\tScissorLeft:\t%i\n\tScissorRight:\t%i", nMotorEncoder[scissorLeft], nMotorEncoder[scissorRight]);
+		doUpdate == false;
 	}
 
 	motor[leftRear] = calcMotorDrive(joystick.joy1_y1, 100);
 	motor[leftFront] = calcMotorDrive(joystick.joy1_y1, 100);
 	motor[rightRear] = calcMotorDrive(joystick.joy1_y2, 100);
 	motor[rightFront] = calcMotorDrive(joystick.joy1_y2, 100);
+
+	else if(!doUpdate && (joy1Btn(1) || joy1Btn(2) || joy1Btn(3) || joy1Btn(4)))	{
+		doUpdate == true;
+	}
 
 	if(joy1Btn(10))	{
 		cont = false;
