@@ -23,6 +23,8 @@ typedef struct {
 } tStepArray;
 
 tStepArray stp;
+bool cont = false;
+int _nSteps;
 
 void init()	{
 	nxtDisplayCenteredTextLine(0, "STP FINDER");
@@ -65,11 +67,40 @@ void update()	{
 	motor[leftRear] = joy1_y1;
 	motor[rightFront] = joy1_y2;
 	motor[rightRear] = joy1_y2;
+
+	if(joy1Btn(1))	{
+		cont = false;
+	}
 }
 
 task main()
 {
-	while(true)	{
+	for(int i = 0; i < 7; i++)	{
+		nxtDisplayClearTextLine(i);
+	}
+
+	nNxtExitClicks = 2;
+	while(cont)	{
 		update();
+	}
+
+	for(int i = 0; i < 7; i++)	{
+		nxtDisplayClearTextLine(i);
+	}
+
+	while(nNxtButtonPressed != 0)	{
+		if(nNxtButtonPressed == 3)	{
+			nxtDisplayString(0, "STEP %i/%i", _nSteps, stp.nSteps);
+			nxtDisplayString(1, "ENC1: %i", stp.step[_nSteps][0]);
+			nxtDisplayString(1, "ENC2: %i", stp.step[_nSteps][1]);
+			nxtDisplayString(1, "ENC3: %i", stp.step[_nSteps][2]);
+			nxtDisplayString(1, "ENC4: %i", stp.step[_nSteps][3]);
+		}
+		else if(nNxtButtonPressed == 1)	{
+			_nSteps++;
+		}
+		else if(nNxtButtonPressed == 2)	{
+			_nSteps--;
+		}
 	}
 }

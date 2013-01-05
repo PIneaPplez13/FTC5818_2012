@@ -87,7 +87,7 @@ void liftControl(int range){
 task main(){
 
 	initializeRobot();
-	//waitForStart(); //comment whole line when testing and not running FCS
+	waitForStart(); //comment whole line when testing and not running FCS
 
 	while(true){
 

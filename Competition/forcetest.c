@@ -1,27 +1,30 @@
 //	#pragmas
-#pragma config(Sensor, S2,,sensorI2CCustom)
+#pragma config(Sensor, S2, SensorMux, sensorI2CCustom)
 
 //	includes
-#include "hitechnic-force.h"
 #include "hitechnic-sensormux.h"
+#include "hitechnic-force.h"
+#include "JoystickDriver.c"
 
 //	#defines
 #define HEAVY 500
-#define FARCE msensor_S2_1
+#define FARCE msensor_S2_2
 
 //	vars
-int force = 0;
+int _force = 0;
 
 task main()
 {
+	waitForStart();
+
 	nxtDisplayTextLine(1, "Force sensor VAL");
 
 	while(1==1)	{
-		force = HTFreadSensor(FARCE);
-		nxtDisplayTextLine(2, "Force: %i", force);
+		_force = HTFreadSensor(FARCE);
+		nxtDisplayTextLine(2, "Force: %i", _force);
 
 		nxtDisplayTextLine(4, "Probably: ");
-		if(force > HEAVY)	{
+		if(_force > HEAVY)	{
 			nxtDisplayTextLine(5, "HOOVY");
 		}
 		else	{
