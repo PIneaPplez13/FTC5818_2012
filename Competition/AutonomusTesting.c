@@ -25,7 +25,7 @@ typedef struct {
 tStepArray stp;
 bool cont = true;
 bool doUpdate = true;
-int _nSteps;
+int _nSteps = 0;
 
 int calcMotorDrive(int joy, int adj)	{
 	return((int)((joy/127.0)*adj));
