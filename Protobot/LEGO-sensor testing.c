@@ -21,6 +21,7 @@ Tests various sensors
 #include "hitechnic-irseeker-v2.h"
 #include "lego-light.h"
 #include "lego-ultrasound.h"
+#include "stats.h"
 
 //	#defines
 #define LIGHT_HI 325
@@ -28,7 +29,7 @@ Tests various sensors
 
 //	vars
 bool shortRange = false;
-int val[4] = {0, 0, 0, 0};
+float prob = 1.0;
 
 //	funcs
 void setup()	{
@@ -41,7 +42,7 @@ void setup()	{
 	nxtDisplayCenteredTextLine(6, "Written by");
 	nxtDisplayCenteredTextLine(7, "Joe Quigley");
 
-	wait1Msec(5000);
+	wait1Msec(2000);
 
 	eraseDisplay();
 
@@ -90,19 +91,32 @@ int readUltrasonic()	{
 task main()
 {
 	//	main task
-	nNxtButtonTask = 5000042;
+	nNxtButtonTask = 5000042;	//	just a random number I came up with
+														//	as long as it is non-zero and positive, it's fine
+														//	enables the program to handle input on it's own
 
 	setup();
 	setShortRange();
-	clearDebugStream();
 
 	while(true)	{
-		/*
-		nxtDisplayTextLine(2, "EOPDRaw:%i", readEOPD(true));
-		nxtDisplayTextLine(3, "EOPDPRC:%i", readEOPD(false));
-		nxtDisplayTextLine(4, "IRSeek: %i", readIRSeekDir());
-		nxtDisplayTextLine(5, "Light:  %i", readLegoLight());
-		nxtDisplayTextLine(6, "Ultra:  %i", readUltrasonic());
+		nxtDisplayTextLine(2, "EOPD:  %i", readEOPD(true));
+		nxtDisplayTextLine(3, "IRSeek:%i", readIRSeekDir());
+		nxtDisplayTextLine(4, "Light: %i", readLegoLight());
+		nxtDisplayTextLine(5, "Ultra: %i", readUltrasonic());
+
+		//	Calculates probability of white w/ a cumulative probability density function
+		//	Values calculated with independent testing
+		//	Phi-CDF, args: z, mean, stddev
+		prob = Phi(readLegoLight(), 394.8636, 0.8441);
+
+		nxtDisplayTextLine(6, "LProb: %f", prob);
+
+		if(prob > 0.1)	{
+			nxtDisplayTextLine(7, "Probably WHITE");
+		}
+		else	{
+			nxtDisplayTextLine(7, "Probably BLACK");
+		}
 
 		if(nNxtButtonPressed == 3)	{
 			if(shortRange)	{
@@ -116,7 +130,5 @@ task main()
 				nxtDisplayTextLine(7, "Short Range Mode");
 			}
 		}
-		*/
-		writeDebugStream("%i\n", readLegoLight());
 	}
 }
