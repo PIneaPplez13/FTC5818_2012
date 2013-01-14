@@ -13,6 +13,8 @@ n		Rev 	Date		Notes
 #ifndef STDBOT_H
 #define STDBOT_H
 
+#define DEBUG true
+
 //	includes =============================================
 #include "hitechnic-eopd.h"
 #include "hitechnic-irseeker-v2.h"
@@ -31,6 +33,12 @@ typedef struct	{
 bool _success = true;
 int _largest = 0;
 int _nextLargest = 0;
+
+//	file i/o
+TFileHandle file;
+TFileIOResult err;
+int val = 0;
+string strval;
 
 //	functions ============================================
 int readEOPD(tSensors EOPD, bool raw)	{
@@ -97,6 +105,47 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 int readLegoLight(tSensors LightSensor)	{
 	//	reads light sensor
 	return LSvalRaw(LightSensor);
+}
+
+void initWriteMode(string filename, int nBytes, bool deleteIfExists = true)	{
+	//	opens a file for writing
+	//	note that only one file may be open at a time
+	if(deleteIfExists)	{
+		Delete(filename, err);
+	}
+	OpenWrite(file, err, filename, nBytes);
+}
+
+void initReadMode(string filename, int nBytes)	{
+	//	opens a file for reading
+	OpenRead(file, err, filename, nBytes);
+}
+
+void closeActiveFile()	{
+	//	closes the active file
+	Close(file, err);
+}
+
+int nextInt()	{
+	//	reads next logical int
+	ReadShort(file, err, val);
+	return val;
+}
+
+string nextStr()	{
+	//	reads next logical string
+	ReadString(file, err, strval);
+	return strval;
+}
+
+void writeInt(int toWrite)	{
+	//	writes an int
+	WriteShort(file, err, toWrite);
+}
+
+void WriteStr(string toWrite)	{
+	//	writes a string
+	WriteString(file, err, toWrite);
 }
 
 #endif
