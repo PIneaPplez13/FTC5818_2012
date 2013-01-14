@@ -3,7 +3,7 @@
 
 	Written by Joe Quigley
 	A set of standard functions for reading sensors, as well as cdf/pdf calculations, mapping, etc.
-	Debug lib ("stdbot_d.h") also contains screen-print funcs, debug funcs, file i/o funcs, and data processing.
+	Debug lib ("stdbot_d.h") also contains screen-print funcs, debug funcs, file i/o funcs, etc.
 
 	Revisions:
 n		Rev 	Date		Notes
