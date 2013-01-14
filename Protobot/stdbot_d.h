@@ -19,6 +19,7 @@ n		Rev 	Date		Notes
 #include "hitechnic-eopd.h"
 #include "hitechnic-irseeker-v2.h"
 #include "lego-light.h"
+#include "lego-ultrasound.h"
 
 //	typedefs =============================================
 typedef struct	{
@@ -37,10 +38,15 @@ int _nextLargest = 0;
 //	file i/o
 TFileHandle file;
 TFileIOResult err;
-int val = 0;
-string strval;
+int _val = 0;
+
+//	display
+int _count = 0;
 
 //	functions ============================================
+
+//	SENSOR FUNCS
+
 int readEOPD(tSensors EOPD, bool raw)	{
 	//	reads EOPD sensor
 	//	@param	raw	whether to read raw val or not
@@ -81,6 +87,9 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 		return false;
 	}
 
+	_largest = 0;
+	_nextLargest = 0;
+
 	for(int i = 0; i < 5; i++)	{
 		if(ir._rawSensors[i] > _largest)	{
 			_largest = ir._rawSensors[i];
@@ -92,7 +101,7 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 		}
 	}
 
-	if((_largest - _nextLargest) < 126)	{
+	if((_largest - _nextLargest) < 126 && ((_largest > 126) || (_nextLargest > 126)))	{
 		ir.rawStrength = (_largest - _nextLargest) * 2;
 	}
 	else	{
@@ -107,7 +116,14 @@ int readLegoLight(tSensors LightSensor)	{
 	return LSvalRaw(LightSensor);
 }
 
-void initWriteMode(string filename, int nBytes, bool deleteIfExists = true)	{
+int readUltrasonic(tSensors US)	{
+	//	reads ultrasonic distance
+	return USreadDist(US);
+}
+
+//	FILE IO FUNCS
+
+void initWriteMode(char* filename, int nBytes, bool deleteIfExists = true)	{
 	//	opens a file for writing
 	//	note that only one file may be open at a time
 	if(deleteIfExists)	{
@@ -116,7 +132,7 @@ void initWriteMode(string filename, int nBytes, bool deleteIfExists = true)	{
 	OpenWrite(file, err, filename, nBytes);
 }
 
-void initReadMode(string filename, int nBytes)	{
+void initReadMode(char* filename, int nBytes)	{
 	//	opens a file for reading
 	OpenRead(file, err, filename, nBytes);
 }
@@ -128,13 +144,32 @@ void closeActiveFile()	{
 
 int nextInt()	{
 	//	reads next logical int
-	ReadShort(file, err, val);
-	return val;
+	ReadShort(file, err, _val);
+	return _val;
 }
 
 void writeInt(int toWrite)	{
 	//	writes an int
 	WriteShort(file, err, toWrite);
+}
+
+//	DISPLAY FUNCS
+
+void plot(int x, int y)	{
+	nxtDrawLine(x, 0, x, y);
+}
+
+void plot(int y)	{
+	nxtDrawLine(_count, 0, _count, y);
+	_count++;
+}
+
+void setx(int x)	{
+	_count = x;
+}
+
+int getx()	{
+	return _count;
 }
 
 #endif
