@@ -23,7 +23,7 @@ typedef struct	{
 	int dir;
 	float rawStrength;
 	float strength;
-	int[5] _rawSensors;
+	int _rawSensors[5];
 }	tIRSeek;
 
 //	vars =================================================
@@ -78,8 +78,8 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 			_largest = ir._rawSensors[i];
 		}
 	}
-	for(i = 0; i < 5; i++)	{
-		if((ir._rawSensors[i] > _nextLargest) && (ir._rawSensors[i] != _largest)	{
+	for(int i = 0; i < 5; i++)	{
+		if((ir._rawSensors[i] > _nextLargest) && (ir._rawSensors[i] != _largest))	{
 			_nextLargest = ir._rawSensors[i];
 		}
 	}
