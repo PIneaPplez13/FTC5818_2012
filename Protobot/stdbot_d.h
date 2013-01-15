@@ -8,6 +8,8 @@
 	Revisions:
 n		Rev 	Date		Notes
 1		0.0		1/13/12	Initial version
+2		0.0		1/14/12	Added screen drawing/file i/o
+3		0.1		1/15/12	Added pdf/cdf
 */
 
 #ifndef STDBOT_H
@@ -20,6 +22,7 @@ n		Rev 	Date		Notes
 #include "hitechnic-irseeker-v2.h"
 #include "lego-light.h"
 #include "lego-ultrasound.h"
+#include "stats.h"
 
 //	typedefs =============================================
 typedef struct	{
@@ -35,6 +38,10 @@ bool _success = true;
 int _largest = 0;
 int _nextLargest = 0;
 
+//	timer
+bool _end = false;
+volatile int _msecs = 0;
+
 //	file i/o
 TFileHandle file;
 TFileIOResult err;
@@ -42,6 +49,24 @@ int _val = 0;
 
 //	display
 int _count = 0;
+
+//	tasks ================================================
+//	TIMER TASK
+
+task timer()	{
+	//	timer task
+	//	keeps track of time, _msecs should be considered volatile
+	while(!_end)	{
+		wait1Msec(1);
+		_msecs--;
+		if(_msecs < 0)	{
+			_end = true;
+		}
+		abortTimeslice();
+	}
+	_end = false;
+	_msecs = 0;
+}
 
 //	functions ============================================
 
@@ -121,6 +146,45 @@ int readUltrasonic(tSensors US)	{
 	return USreadDist(US);
 }
 
+//	PROBABIlITY FUNCS
+
+float normPDF(float z, float mu, float sigma)	{
+	//	Calculates probability z in normal curve
+	if(z < mu)	{
+		return Phi(z, mu, sigma)/2.0;
+	}
+	else	{
+		z = (2*mu)-z;
+		return Phi(z, mu, sigma)/2.0;
+	}
+}
+
+float normCDF(float z, float mu, float sigma)	{
+	//	Calculates probability z in cumulative normal curve
+	return Phi(z, mu, sigma);
+}
+
+//	TIMER FUNCS
+
+void beginNewTimer(int ms)	{
+	//	starts a new timer
+	//	only one can be active at a time, _msecs should be considered volatile
+	_msecs = ms;
+	StartTask(timer, 8);
+}
+
+void endActiveTimer()	{
+	//	ends the timer
+	_end = true;
+}
+
+int getElapsed()	{
+	//	returns _msecs
+	//	warning! _msecs should be considered volatile
+	return _msecs;
+}
+
+//	Debugger Functions ===================================
 //	FILE IO FUNCS
 
 void initWriteMode(char* filename, int nBytes, bool deleteIfExists = true)	{

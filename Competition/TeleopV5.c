@@ -72,10 +72,10 @@ void armControl(){
 void driveControl(int range){
 
 	//motor speed and direction is directly translated from joystick position
-	motor[LeftFront] += calcMotorPow(joystick.joy1_y1, range) / 20; //scale -range, +range
-	motor[LeftRear]  += calcMotorPow(joystick.joy1_y1, range) / 20;
-	motor[RightFront] += calcMotorPow(joystick.joy1_y2, range) / 20;
-	motor[RightRear] += calcMotorPow(joystick.joy1_y2, range) / 20;
+	motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range); //scale -range, +range
+	motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
+	motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
+	motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
 }
 
 void liftControl(int range){
