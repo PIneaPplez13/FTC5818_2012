@@ -35,9 +35,9 @@
 
 void initializeRobot(){
 
-	//reset motor encoders on scissor lift motors
-	nMotorEncoder[ScissorLeft] = 0;
-  nMotorEncoder[ScissorRight] = 0;
+//reset motor encoders on scissor lift motors
+nMotorEncoder[ScissorLeft] = 0;
+nMotorEncoder[ScissorRight] = 0;
 
   //initialize servo to starting position
   servo[ArmContRot] = 126;
@@ -84,7 +84,7 @@ void hookDriveControl(int range){
 
 	//motor speed is adjusted based on joystick direction
 	//motor direction is based on the assigned motor value that is farthest from 0
-	if(abs(joystick.joy1_y1) > abs(joystick.joy1_y2)){
+	if(abs(joystick.joy1_y1) < abs(joystick.joy1_y2)){
 		int joyValue1 = (joystick.joy1_y1 / joystick.joy1_y2) * (joystick.joy1_y2 / abs(joystick.joy1_y2));
 
 		motor[LeftFront] = calcMotorPow(joyValue1, range);
