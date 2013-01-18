@@ -42,6 +42,10 @@ int _nextLargest = 0;
 bool _end = false;
 volatile int _msecs = 0;
 
+//	scaler
+int iscale = 0;
+float fscale = 0.0;
+
 //	file i/o
 TFileHandle file;
 TFileIOResult err;
@@ -69,6 +73,16 @@ task timer()	{
 }
 
 //	functions ============================================
+
+//	SCALE FUNCS
+
+int Map(int val, int lo, int hi, int rlo, int rhi)	{
+	val -= lo;
+	val = ((((float)val/(hi-lo))*(rhi-rlo)) + rlo;
+	return val;
+}
+
+float map(
 
 //	SENSOR FUNCS
 
@@ -111,28 +125,8 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	if(!_success)	{
 		return false;
 	}
-
-	_largest = 0;
-	_nextLargest = 0;
-
-	for(int i = 0; i < 5; i++)	{
-		if(ir._rawSensors[i] > _largest)	{
-			_largest = ir._rawSensors[i];
-		}
-	}
-	for(int i = 0; i < 5; i++)	{
-		if((ir._rawSensors[i] > _nextLargest) && (ir._rawSensors[i] != _largest))	{
-			_nextLargest = ir._rawSensors[i];
-		}
-	}
-
-	if((_largest - _nextLargest) < 126 && ((_largest > 126) || (_nextLargest > 126)))	{
-		ir.rawStrength = (_largest - _nextLargest) * 2;
-	}
-	else	{
-		ir.rawStrength = _largest;
-	}
-
+	if((ir.dir == 1) || (ir.dir ==  3) || (ir.dir ==  5) || (ir.dir ==  7) || (ir.dir ==  9))	{
+		_rawStrength = ir._rawSensors[
 	return true;
 }
 

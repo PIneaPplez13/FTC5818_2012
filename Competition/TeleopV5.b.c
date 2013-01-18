@@ -129,7 +129,7 @@ void liftControl(int range){
 	//motor direction is translated from joystick position
 	//general motor speed it determined from modifier buttons
 	motor[ScissorLeft] = calcMotorPow(joystick.joy2_y1, range); //scale -range to +range
-	motor[ScissorRight] = calcMotorPow(joystick.joy2_y2, range;
+	motor[ScissorRight] = calcMotorPow(joystick.joy2_y2, range);
 }
 
 task main(){
