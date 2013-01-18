@@ -104,7 +104,7 @@ void hookDriveControl(int range){
 		if((joystick.joy1_y1 / joystick.joy1_y2) != 1){
 			if(joystick.joy1_y1 > 0){
 				motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
-				motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
+				motor[LeftRear]  = calcMotorPowAjoystick.joy1_y1, range);
 				motor[RightFront] = -calcMotorPow(joystick.joy1_y2, range);
 				motor[RightRear] = -calcMotorPow(joystick.joy1_y2, range);
 
