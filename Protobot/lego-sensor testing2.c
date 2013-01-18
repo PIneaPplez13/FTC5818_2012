@@ -16,12 +16,12 @@ task main()
 {
 	initWriteMode("log.txt", 1024, true);
 	nMotorEncoder[left] = 0;
-	nMotorEncoderTarget[left] = 3600;
+	nMotorEncoderTarget[left] = 25600;
 	motor[left] = 15;
 
 	while(nMotorRunState[left] != runStateIdle)	{
-		//readIRSeeker(S1, ir);
-		writeInt(readUltrasonic(Ultrasonic));
+		readIRSeeker(S1, ir);
+		writeInt(ir._rawSensors[2]);
 		writeInt((int)((inPerDeg * nMotorEncoder[left])*1000));
 		plot((int)(inPerDeg * nMotorEncoder[left]), readUltrasonic(Ultrasonic));
 	}
