@@ -6,9 +6,10 @@ task main()
 
 	for(int i = 0; i < 1000; i++)	{
 		writeDebugStream("%i\t", nextInt());
-		wait1Msec(10);
 		writeDebugStream("%f\n", (((nextInt())/1000.0)));
-		wait1Msec(10);
+		nxtDisplayBigTextLine(1, "%i", nextInt());
+		nxtDisplayBigTextLine(3, "%f", (((nextInt())/1000.0)));
+		wait1Msec(40);
 	}
 
 	closeActiveFile();

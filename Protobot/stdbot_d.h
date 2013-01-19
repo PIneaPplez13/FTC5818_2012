@@ -35,16 +35,16 @@ typedef struct	{
 //	vars =================================================
 //	readIRSeeker()
 bool _success = true;
-int _largest = 0;
-int _nextLargest = 0;
+//int _largest = 0;
+//int _nextLargest = 0;
 
 //	timer
 bool _end = false;
 volatile int _msecs = 0;
 
 //	scaler
-int iscale = 0;
-float fscale = 0.0;
+//int iscale = 0;
+//float fscale = 0.0;
 
 //	file i/o
 TFileHandle file;
@@ -78,11 +78,9 @@ task timer()	{
 
 int Map(int val, int lo, int hi, int rlo, int rhi)	{
 	val -= lo;
-	val = ((((float)val/(hi-lo))*(rhi-rlo)) + rlo;
+	val = ((((float)val/(hi-lo))*(rhi-rlo)) + rlo);
 	return val;
 }
-
-float map(
 
 //	SENSOR FUNCS
 
@@ -118,15 +116,18 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	//	direction: ir.dir
 	//	raw strength: ir.rawStrength
 
-	readIRSeekDir(IRSeeker, ir);
-
 	_success = HTIRS2readAllACStrength(IRSeeker, ir._rawSensors[0], ir._rawSensors[1], ir._rawSensors[2], ir._rawSensors[3], ir._rawSensors[4]);
 
 	if(!_success)	{
 		return false;
 	}
-	if((ir.dir == 1) || (ir.dir ==  3) || (ir.dir ==  5) || (ir.dir ==  7) || (ir.dir ==  9))	{
-		_rawStrength = ir._rawSensors[
+
+	_success = HTIRS2readEnhanced(IRSeeker, ir.dir, ir.rawStrength);
+
+	if(!_success)	{
+		return false;
+	}
+
 	return true;
 }
 

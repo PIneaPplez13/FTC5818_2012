@@ -16,14 +16,18 @@ task main()
 {
 	initWriteMode("log.txt", 1024, true);
 	nMotorEncoder[left] = 0;
-	nMotorEncoderTarget[left] = 25600;
-	motor[left] = 15;
+	nMotorEncoderTarget[left] = 102400;
+	motor[left] = 35;
 
 	while(nMotorRunState[left] != runStateIdle)	{
 		readIRSeeker(S1, ir);
 		writeInt(ir._rawSensors[2]);
 		writeInt((int)((inPerDeg * nMotorEncoder[left])*1000));
-		plot((int)(inPerDeg * nMotorEncoder[left]), readUltrasonic(Ultrasonic));
+		nxtDisplayTextLine(1, "--------strength");
+		nxtDisplayTextLine(4, "------------dist");
+		nxtDisplayBigTextLine(2, "%i", ir._rawSensors[2]);
+		nxtDisplayBigTextLine(5, "%f", (inPerDeg * nMotorEncoder[left])*1000);
+		//plot((int)(inPerDeg * nMotorEncoder[left]), readUltrasonic(Ultrasonic));
 	}
 
 	wait1Msec(5000);

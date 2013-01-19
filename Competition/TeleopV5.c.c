@@ -101,7 +101,7 @@ void hookDriveControl(int range){
 		motor[RightRear] = calcMotorPow(joyValue2, range);
 
 	}else{
-		if((joystick.joy1_y1 / joystick.joy1_y2) != 1){
+		if((joystick.joy1_y1 / joystick.joy1_y2) != 0){
 			if(joystick.joy1_y1 > 0){
 				motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
 				motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
@@ -129,7 +129,7 @@ void liftControl(int range){
 	//motor direction is translated from joystick position
 	//general motor speed it determined from modifier buttons
 	motor[ScissorLeft] = calcMotorPow(joystick.joy2_y1, range); //scale -range to +range
-	motor[ScissorRight] = calcMotorPow(joystick.joy2_y2, range;
+	motor[ScissorRight] = calcMotorPow(joystick.joy2_y2, range);
 }
 
 task main(){
