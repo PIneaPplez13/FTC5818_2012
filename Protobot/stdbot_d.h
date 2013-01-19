@@ -10,6 +10,7 @@ n		Rev 	Date		Notes
 1		0.0		1/13/12	Initial version
 2		0.0		1/14/12	Added screen drawing/file i/o
 3		0.1		1/15/12	Added pdf/cdf
+4		0.2		1/19/12	Added scalers and readUltrasonic changed to return distance in inches, added readUltrasonicRaw to return raw val
 */
 
 #ifndef STDBOT_H
@@ -136,9 +137,14 @@ int readLegoLight(tSensors LightSensor)	{
 	return LSvalRaw(LightSensor);
 }
 
-int readUltrasonic(tSensors US)	{
+int readUltrasonicRaw(tSensors US)	{
 	//	reads ultrasonic distance
 	return USreadDist(US);
+}
+
+int readUltrasonic(tSensors US)	{
+	//	reads distance in inches
+	return (-6.504+(.5171*USreadDist(US)));
 }
 
 //	PROBABIlITY FUNCS

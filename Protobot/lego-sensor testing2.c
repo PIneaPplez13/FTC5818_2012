@@ -10,7 +10,6 @@
 #define wheeldiam 2.25
 
 float inPerDeg = (PI*wheeldiam)/360.0;
-tIRSeek ir = tIRSeek;
 
 task main()
 {
@@ -20,13 +19,12 @@ task main()
 	motor[left] = 35;
 
 	while(nMotorRunState[left] != runStateIdle)	{
-		readIRSeeker(S1, ir);
-		writeInt(ir._rawSensors[2]);
-		writeInt((int)((inPerDeg * nMotorEncoder[left])*1000));
-		nxtDisplayTextLine(1, "--------strength");
-		nxtDisplayTextLine(4, "------------dist");
-		nxtDisplayBigTextLine(2, "%i", ir._rawSensors[2]);
-		nxtDisplayBigTextLine(5, "%f", (inPerDeg * nMotorEncoder[left])*1000);
+		nxtDisplayTextLine(0, "measured dist");
+		nxtDisplayTextLine(3, "inches");
+		nxtDisplayTextLine(4, "actual dist");
+		nxtDisplayTextLine(7, "inches");
+		nxtDisplayBigTextLine(1, "%i", readUltrasonic(Ultrasonic));
+		nxtDisplayBigTextLine(5, "%f", (inPerDeg * nMotorEncoder[left]));
 		//plot((int)(inPerDeg * nMotorEncoder[left]), readUltrasonic(Ultrasonic));
 	}
 
