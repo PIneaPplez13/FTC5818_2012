@@ -115,14 +115,14 @@ void hookDriveControl(int range){
 
 			}else{
 				motor[LeftFront] = -calcMotorPow(joystick.joy1_y1, range);
-				motor[LeftRear]  = -calcMotorPow(joystick.joy1_y1, range);
+				motor[LeftRear] = -calcMotorPow(joystick.joy1_y1, range);
 				motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
 				motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
 			}
 
 		}else{
 			motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
-			motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
+			motor[LeftRear] = calcMotorPow(joystick.joy1_y1, range);
 			motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
 			motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
 		}
@@ -132,12 +132,15 @@ void hookDriveControl(int range){
 void liftControl(int range){
 
 	if(nNxtButtonPressed == RIGHT){
+		motor[ScissorLeft] = 100;
 		motor[ScissorRight] = 100;
 
 	}else if(nNxtButtonPressed == LEFT){
+		motor[ScissorLeft] = -100;
 		motor[ScissorRight] = -100;
 
 	}else{
+		motor[ScissorLeft] = 0;
 		motor[ScissorRight] = 0;
 	}
 }
