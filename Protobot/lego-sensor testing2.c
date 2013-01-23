@@ -18,12 +18,16 @@ task main()
 	nMotorEncoderTarget[left] = 102400;
 	motor[left] = 35;
 
+	HTEOPDsetLongRange(Ultrasonic);
+
 	while(nMotorRunState[left] != runStateIdle)	{
+		writeInt(readEOPD(Ultrasonic));
+		writeInt((inPerDeg * nMotorEncoder[left])*1000);
 		nxtDisplayTextLine(0, "measured dist");
 		nxtDisplayTextLine(3, "inches");
 		nxtDisplayTextLine(4, "actual dist");
 		nxtDisplayTextLine(7, "inches");
-		nxtDisplayBigTextLine(1, "%i", readUltrasonic(Ultrasonic));
+		nxtDisplayBigTextLine(1, "%i", (219.577+(-62.333 * (readEOPD(Ultrasonic)))));
 		nxtDisplayBigTextLine(5, "%f", (inPerDeg * nMotorEncoder[left]));
 		//plot((int)(inPerDeg * nMotorEncoder[left]), readUltrasonic(Ultrasonic));
 	}

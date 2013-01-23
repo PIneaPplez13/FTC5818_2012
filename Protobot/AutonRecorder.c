@@ -26,6 +26,7 @@
 	Revisions:
 n		Rev		Date		Notes
 1		0.0		1/19/13	First version
+2		0.1		1/23/13	Fixed a few things and made sure encoder vals were contrained to ints
 */
 
 #include "stdbot_d.h"
@@ -48,10 +49,10 @@ task main()
 			PlayTone(523, 15);
 			beginNewTimer(1000);
 			writeInt(nSteps);
-			writeInt(nMotorEncoder[leftFront]);
-			writeInt(nMotorEncoder[leftRear]);
-			writeInt(nMotorEncoder[rightFront]);
-			writeInt(nMotorEncoder[rightRear]);
+			writeInt(nMotorEncoder[leftFront]/1000);
+			writeInt(nMotorEncoder[leftRear]/1000);
+			writeInt(nMotorEncoder[rightFront]/1000);
+			writeInt(nMotorEncoder[rightRear]/1000);
 
 			nSteps++;
 		}
