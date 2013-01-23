@@ -83,6 +83,12 @@ int Map(int val, int lo, int hi, int rlo, int rhi)	{
 	return val;
 }
 
+float Map(float val, float lo, float hi, float rlo, float rhi)	{
+	val -= low;
+	val = (((val/(hi-lo))*(rhi-rlo)) + rlo);
+	return val;
+}
+
 //	SENSOR FUNCS
 
 int readEOPD(tSensors EOPD, bool raw)	{
