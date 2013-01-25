@@ -84,7 +84,7 @@ int Map(int val, int lo, int hi, int rlo, int rhi)	{
 }
 
 float Map(float val, float lo, float hi, float rlo, float rhi)	{
-	val -= low;
+	val -= lo;
 	val = (((val/(hi-lo))*(rhi-rlo)) + rlo);
 	return val;
 }
