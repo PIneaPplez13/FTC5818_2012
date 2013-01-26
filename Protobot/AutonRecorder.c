@@ -3,12 +3,12 @@
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
-#pragma config(Motor,  mtr_S1_C1_1,     ScissorLeft,   tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     ScissorRight,  tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S1_C2_1,     leftRear,      tmotorTetrix, PIDControl, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C2_2,     leftFront,     tmotorTetrix, PIDControl, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_1,     rightRear,     tmotorTetrix, PIDControl, encoder)
-#pragma config(Motor,  mtr_S1_C3_2,     rightFront,    tmotorTetrix, PIDControl, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     ScissorLeft,   tmotorTetrix, PIDControl, encoder)
+#pragma config(Motor,  mtr_S1_C1_2,     ScissorRight,  tmotorTetrix, PIDControl, encoder)
+#pragma config(Motor,  mtr_S1_C2_1,     RightRear,     tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C2_2,     RightFront,    tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C3_1,     LeftRear,      tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     LeftFront,     tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Servo,  srvo_S1_C4_1,    ArmContRot,           tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C4_2,    servo2,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_3,    servo3,               tServoNone)
@@ -65,7 +65,6 @@ task main()
 			writeInt(nMotorEncoder[rightFront	]/1000);
 			writeInt(nMotorEncoder[rightRear	]/1000);
 			writeInt(nMotorEncoder[ScissorLeft]/1000);
-			writeInt(nMotorEncoder[ScissorRight]/1000);
 
 			nSteps++;
 		}
@@ -75,6 +74,8 @@ task main()
 			nMotorEncoder[leftRear] = 0;
 			nMotorEncoder[rightFront] = 0;
 			nMotorEncoder[rightRear] = 0;
+			nMotorEncoder[ScissorLeft] = 0;
+			nMotorEncoder[ScissorRight] = 0;
 		}
 
 		if(joy1Btn(3))	{
