@@ -1,5 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S4,     LiftTouchSensor, sensorTouch)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
@@ -129,15 +130,21 @@ void hookDriveControl(int range){
 	}
 }
 
-void liftControl(int range){
+void liftControl(int range, int joyValue1, int joyValue2){
 
-	if(nNxtButtonPressed == RIGHT){
-		motor[ScissorLeft] = 100;
+	if((joyValue1 > 10) || (joyValue2 > 10)){
+		motor[ScissorLeft] = 100; //100
 		motor[ScissorRight] = 100;
 
-	}else if(nNxtButtonPressed == LEFT){
-		motor[ScissorLeft] = -100;
-		motor[ScissorRight] = -100;
+	}else if((joyValue1 < -10) || (joyValue2 < -10)){
+		if(SensorValue(LiftTouchSensor) == 0){
+			motor[ScissorLeft] = -100; //-100;
+			motor[ScissorRight] = -100;
+
+		}else{
+			motor[ScissorLeft] = 0;
+			motor[ScissorRight] = 0;
+		}
 
 	}else{
 		motor[ScissorLeft] = 0;
@@ -169,18 +176,18 @@ task main(){
 		//--- PULLEY LIFT (Controller #2)
 
 		if(joy2Btn(L1) || joy2Btn(R1)){ //slow
-	  	liftControl(20);
+	  	liftControl(5, joystick.joy2_y1, joystick.joy2_y2);
 
 	  }else if(joy2Btn(L2) || joy2Btn(R2)){ //fast
-	  	liftControl(100);
+	  	liftControl(100, joystick.joy2_y1, joystick.joy2_y2);
 
 	  }else{
-	  	liftControl(80); //default
+	  	liftControl(50, joystick.joy2_y1, joystick.joy2_y2); //default
 	  }
 
 	  //--- ARM CONTROL (Controller #2)
 
-	  //armControl();
+	  armControl();
 
 	}
 }
