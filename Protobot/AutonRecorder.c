@@ -35,24 +35,37 @@ n		Rev		Date		Notes
 int nSteps = 0;
 bool cont = true;
 
+int mscal(int mval)	{
+	if(abs(mval) > 10)	{
+		return (Map(mval, -127, 127, -100, 100));
+	}
+	else	{
+		return 0;
+	}
+}
+
 task main()
 {
 	initWriteMode("auto.txt", 1024, true);
 
 	while(cont)	{
-		motor[leftRear] = joystick.joy1_y1;
-		motor[leftFront] = joystick.joy1_y1;
-		motor[rightRear] = joystick.joy1_y2;
-		motor[rightFront] = joystick.joy1_y2;
+		motor[leftRear	] = mscal(joystick.joy1_y1);
+		motor[leftFront	] = mscal(joystick.joy1_y1);
+		motor[rightRear	] = mscal(joystick.joy1_y2);
+		motor[rightFront] = mscal(joystick.joy1_y2);
+		motor[ScissorLeft] = mscal(joystick.joy2_y2);
+		motor[ScissorRight] = mscal(joystick.joy2_y2);
 
 		if(joy1Btn(1) && (getElapsed() == 0))	{
 			PlayTone(523, 15);
 			beginNewTimer(1000);
 			writeInt(nSteps);
-			writeInt(nMotorEncoder[leftFront]/1000);
-			writeInt(nMotorEncoder[leftRear]/1000);
-			writeInt(nMotorEncoder[rightFront]/1000);
-			writeInt(nMotorEncoder[rightRear]/1000);
+			writeInt(nMotorEncoder[leftFront	]/1000);
+			writeInt(nMotorEncoder[leftRear		]/1000);
+			writeInt(nMotorEncoder[rightFront	]/1000);
+			writeInt(nMotorEncoder[rightRear	]/1000);
+			writeInt(nMotorEncoder[ScissorLeft]/1000);
+			writeInt(nMotorEncoder[ScissorRight]/1000);
 
 			nSteps++;
 		}
