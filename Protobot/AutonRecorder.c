@@ -3,7 +3,7 @@
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorC,           ,             tmotorNXT, openLoop)
-#pragma config(Motor,  mtr_S1_C1_1,     ScissorLeft,   tmotorTetrix, PIDControl, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     ScissorLeft,   tmotorTetrix, openLoop)
 #pragma config(Motor,  mtr_S1_C1_2,     ScissorRight,  tmotorTetrix, PIDControl, encoder)
 #pragma config(Motor,  mtr_S1_C2_1,     RightRear,     tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_2,     RightFront,    tmotorTetrix, openLoop, encoder)
@@ -45,6 +45,15 @@ int mscal(int mval)	{
 	}
 }
 
+int sscal(int mval)	{
+	if(abs(mval) > 10)	{
+		return 100;
+	}
+	else	{
+		return 0;
+	}
+}
+
 task main()
 {
 	initWriteMode("auto.txt", 1024, true);
@@ -54,18 +63,17 @@ task main()
 		motor[LeftFront	] = mscal(joystick.joy1_y1);
 		motor[RightRear	] = mscal(joystick.joy1_y2);
 		motor[RightFront] = mscal(joystick.joy1_y2);
-		motor[ScissorLeft] = mscal(joystick.joy2_y2);
-		motor[ScissorRight] = mscal(joystick.joy2_y2);
+		motor[ScissorLeft] = sscal(joystick.joy2_y2);
+		motor[ScissorRight] = sscal(joystick.joy2_y2);
 
-		if(joy1Btn(1))	{
+		if(joy1Btn(1) || joy2Btn(1))	{
 			PlayTone(523, 15);
-			beginNewTimer(1000);
 			writeInt(nSteps);
 			writeInt(nMotorEncoder[LeftFront	]/1000);
 			writeInt(nMotorEncoder[LeftRear		]/1000);
 			writeInt(nMotorEncoder[RightFront	]/1000);
 			writeInt(nMotorEncoder[RightRear	]/1000);
-			writeInt(nMotorEncoder[ScissorLeft]/1000);
+			writeInt(nMotorEncoder[ScissorRight]/1000);
 
 			nSteps++;
 
@@ -73,16 +81,15 @@ task main()
 			playTone(523, 15);
 		}
 
-		if(joy1Btn(2))	{
+		if(joy1Btn(2) || joy2Btn(2))	{
 			nMotorEncoder[LeftFront] = 0;
 			nMotorEncoder[LeftRear] = 0;
 			nMotorEncoder[RightFront] = 0;
 			nMotorEncoder[RightRear] = 0;
-			nMotorEncoder[ScissorLeft] = 0;
 			nMotorEncoder[ScissorRight] = 0;
 		}
 
-		if(joy1Btn(3))	{
+		if(joy1Btn(3) || joy2Btn(3))	{
 			cont = false;
 			PlayTone(300, 15);
 			closeActiveFile();

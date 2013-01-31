@@ -19,17 +19,17 @@
 
 #include "stdbot_d.h"
 
-#define nSTEPS 6
+#define nSTEPS 3
 
 bool cont = true;
-int mtr[5];
-int *mref = mtr;
+int mtr[5] = {0,0,0,0,0};
+//int *mref = mtr;
 
 task main()
 {
-	for(; mref < mtr+5; mref++)	{
+	/*for(; mref < mtr+5; mref++)	{
 		*mref = 0;
-	}
+	}*/
 
 	initReadMode("auto.txt", 1024);
 
@@ -83,12 +83,8 @@ task main()
 				nMotorEncoder[RightRear] = 0;
 				mtr[3] = 0;
 			}
-			if((mtr[4] != 0) && (abs(nMotorEncoder[ScissorLeft]) > abs(mtr[4])))	{
-				motor[ScissorLeft] = 0;
-				nMotorEncoder[ScissorLeft] = 0;
-				mtr[4] = 0;
-			}
 			if((mtr[4] != 0) && (abs(nMotorEncoder[ScissorRight]) > abs(mtr[4])))	{
+				motor[ScissorLeft] = 0;
 				motor[ScissorRight] = 0;
 				nMotorEncoder[ScissorRight] = 0;
 				mtr[4] = 0;
