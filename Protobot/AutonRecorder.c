@@ -27,6 +27,7 @@
 n		Rev		Date		Notes
 1		0.0		1/19/13	First version
 2		0.1		1/23/13	Fixed a few things and made sure encoder vals were contrained to ints
+IR SEEKER IN PORT 3
 */
 
 #include "stdbot_d.h"
@@ -49,31 +50,34 @@ task main()
 	initWriteMode("auto.txt", 1024, true);
 
 	while(cont)	{
-		motor[leftRear	] = mscal(joystick.joy1_y1);
-		motor[leftFront	] = mscal(joystick.joy1_y1);
-		motor[rightRear	] = mscal(joystick.joy1_y2);
-		motor[rightFront] = mscal(joystick.joy1_y2);
+		motor[LeftRear	] = mscal(joystick.joy1_y1);
+		motor[LeftFront	] = mscal(joystick.joy1_y1);
+		motor[RightRear	] = mscal(joystick.joy1_y2);
+		motor[RightFront] = mscal(joystick.joy1_y2);
 		motor[ScissorLeft] = mscal(joystick.joy2_y2);
 		motor[ScissorRight] = mscal(joystick.joy2_y2);
 
-		if(joy1Btn(1) && (getElapsed() == 0))	{
+		if(joy1Btn(1))	{
 			PlayTone(523, 15);
 			beginNewTimer(1000);
 			writeInt(nSteps);
-			writeInt(nMotorEncoder[leftFront	]/1000);
-			writeInt(nMotorEncoder[leftRear		]/1000);
-			writeInt(nMotorEncoder[rightFront	]/1000);
-			writeInt(nMotorEncoder[rightRear	]/1000);
+			writeInt(nMotorEncoder[LeftFront	]/1000);
+			writeInt(nMotorEncoder[LeftRear		]/1000);
+			writeInt(nMotorEncoder[RightFront	]/1000);
+			writeInt(nMotorEncoder[RightRear	]/1000);
 			writeInt(nMotorEncoder[ScissorLeft]/1000);
 
 			nSteps++;
+
+			wait1Msec(500);
+			playTone(523, 15);
 		}
 
 		if(joy1Btn(2))	{
-			nMotorEncoder[leftFront] = 0;
-			nMotorEncoder[leftRear] = 0;
-			nMotorEncoder[rightFront] = 0;
-			nMotorEncoder[rightRear] = 0;
+			nMotorEncoder[LeftFront] = 0;
+			nMotorEncoder[LeftRear] = 0;
+			nMotorEncoder[RightFront] = 0;
+			nMotorEncoder[RightRear] = 0;
 			nMotorEncoder[ScissorLeft] = 0;
 			nMotorEncoder[ScissorRight] = 0;
 		}

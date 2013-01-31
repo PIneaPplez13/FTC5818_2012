@@ -19,7 +19,7 @@
 
 #include "stdbot_d.h"
 
-#define nSTEPS 2
+#define nSTEPS 6
 
 bool cont = true;
 int mtr[5];
