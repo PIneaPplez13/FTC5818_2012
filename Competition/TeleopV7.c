@@ -133,12 +133,12 @@ void hookDriveControl(int range){
 void liftControl(int range, int joyValue1, int joyValue2){
 
 	if((joyValue1 > 10) || (joyValue2 > 10)){
-		motor[ScissorLeft] = 100; //100
+		motor[ScissorLeft] = 90; //100
 		motor[ScissorRight] = 100;
 
 	}else if((joyValue1 < -10) || (joyValue2 < -10)){
 		if(SensorValue(LiftTouchSensor) == 0){
-			motor[ScissorLeft] = -100; //-100;
+			motor[ScissorLeft] = -90; //-100;
 			motor[ScissorRight] = -100;
 
 		}else{
