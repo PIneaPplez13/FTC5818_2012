@@ -17,10 +17,15 @@
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
 
 #define nSTEPS 3
+#define LEFT 2
+#define RIGHT 1
+#define ORANGE 3
 
 #include "stdbot.h"
 
 int steps[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
+//int LEFT_FIRST[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
+//int *steps[nSTEPS][4];
 
 tMotor mtrs[4] = {LeftRear, LeftFront, RightRear, RightFront};
 tMotor *mtr = mtrs;
@@ -30,8 +35,32 @@ int i = 0;
 bool cont = true;
 bool mtrRunning[4] = {true, true, true, true};
 
+bool pressed = false;
+
+/*void selectMode()	{
+	nxtDisplayTextLine(1, "Select Mode");
+	nxtDisplayTextLine(2, "LEFT- left side");
+	nxtDisplayTextLine(3, "RIGHT- right side");
+
+	while(pressed == false){
+
+  	if(nNxtButtonPressed == LEFT){
+  		steps = &LEFT_FIRST;
+  		pressed = true;
+
+  	}if(nNxtButtonPressed == RIGHT){
+  		steps = &RIGHT_FIRST;
+  		pressed = true;
+  	}
+  }
+
+  eraseDisplay();
+}*/
+
 task main()
 {
+	//selectMode();
+
 	nMotorEncoder[LeftFront	] = 0;
 	nMotorEncoder[LeftRear	] = 0;
 	nMotorEncoder[RightFront] = 0;

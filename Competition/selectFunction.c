@@ -2,27 +2,28 @@
 #define RIGHT 1
 #define ORANGE 3
 
-mode = 1;
-pressed = False;
+int mode = 1;
+bool pressed = false;
 
 int selectMode(){
 
-  if(nNxtButtonPressed == LEFT){
-  	mode = 1;
+	while(pressed == false){
 
-  }if(nNxtButtonPressed == RIGHT){
-  	mode = 2;
+  	if(nNxtButtonPressed == LEFT){
+  		mode = 1;
+  		pressed = true;
 
-  }if(nNxtButtonPressed == ORANGE){
-  	pressed = True;
-  	return mode;
+  	}if(nNxtButtonPressed == RIGHT){
+  		mode = 2;
+  		pressed = true;
+  	}
   }
+  return mode;
 }
 
 task main(){
 
   selectMode();
-	waitForStart();
 
   while (true){
 
