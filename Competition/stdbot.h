@@ -168,6 +168,7 @@ void beginNewTimer(int ms)	{
 	//	starts a new timer
 	//	only one can be active at a time, _msecs should be considered volatile
 	_msecs = ms;
+	_end = false;
 	StartTask(timer, 8);
 }
 
