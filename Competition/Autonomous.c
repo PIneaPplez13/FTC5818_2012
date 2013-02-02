@@ -37,6 +37,7 @@ n		Rev 	Date		Notes
 #define ORANGE 3
 
 #include "stdbot.h"
+#include "JoystickDriver.c"
 
 int steps[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
 //int LEFT_FIRST[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
@@ -73,6 +74,7 @@ bool mtrRunning[4] = {true, true, true, true};
 task main()
 {
 	//selectMode();
+	waitForStart();
 
 	nMotorEncoder[LeftFront	] = 0;
 	nMotorEncoder[LeftRear	] = 0;
