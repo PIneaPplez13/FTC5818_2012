@@ -40,14 +40,6 @@ int _nextLargest = 0;
 bool _end = false;
 volatile int _msecs = 0;
 
-//	file i/o
-TFileHandle file;
-TFileIOResult err;
-int _val = 0;
-
-//	display
-int _count = 0;
-
 //	tasks ================================================
 //	TIMER TASK
 

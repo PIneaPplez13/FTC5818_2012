@@ -1,3 +1,15 @@
+/*
+	FTC TEAM 5818 "BOTTERING RAMS" 2012-2013 "Ring it up!"
+
+	Written by Ethan Eymontt
+	~The official 2013 Teleop round program~
+	Controls the motors with a cubic function and properly manages other
+	functions of the robot, to allow drivers to effectivley control the robot.
+
+	Revisions:
+n		Rev 	Date		Notes
+*/
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S4,     LiftTouchSensor, sensorTouch)

@@ -1,3 +1,18 @@
+/*
+	FTC TEAM 5818 "BOTTERING RAMS" 2012-2013 "Ring it up!"
+
+	Written by Joe Quigley and Ethan Eymontt
+	~The official 2013 Autonomous round program~
+	Reads a 2d array of size [nSTEPS][4], where nSTEPS is the number of steps
+	The second dimension holds values for the 4 individual motors.
+	After execution, the lifts and servo are then operated.
+
+	Revisions:
+n		Rev 	Date		Notes
+1		0.0		1/31/13	Initial version
+2		0.1		2/1/13	Fixed some bugs and finetuned steps- dumb, only follows one path
+*/
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
@@ -34,8 +49,6 @@ int nStep = 0;
 int i = 0;
 bool cont = true;
 bool mtrRunning[4] = {true, true, true, true};
-
-bool pressed = false;
 
 /*void selectMode()	{
 	nxtDisplayTextLine(1, "Select Mode");
