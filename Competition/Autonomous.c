@@ -29,6 +29,9 @@
 n		Rev 	Date		Notes
 1		0.0		1/31/13	Initial version
 2		0.1		2/1/13	Fixed some bugs and finetuned steps- dumb, only follows one path
+3		0.1		2/2/13	Competition fixes
+4		0.1		2/5/13	Finalized code, established some conventions
+
 */
 
 #define nSTEPS 3
@@ -39,19 +42,79 @@ n		Rev 	Date		Notes
 #include "stdbot.h"
 #include "JoystickDriver.c"
 
-int steps[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
-//int LEFT_FIRST[nSTEPS][4] = {{950, 950, 950, 950}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
-//int *steps[nSTEPS][4];
+/*	==========================
+ *	Motor Action Groups (MAGs)
+ *	==========================
+ *	These detail motor actions to take during normal execution of the Autonomus round.
+ *	They are formatted thusly:
+ *	An array of 4-element arrays, with each element of the 4-element arrays containing
+ *	encoder steps to take for each motor. The program will not move on until these
+ *	values are met. They are in the following order: LeftRear, LeftFront, RightRear,
+ *	RightFront.
+*/
+
+int steps[nSTEPS][4] = {{840, 840, 840, 840}, {1350, 1350, -1350, -1350}, {3900, 3900, 3900, 3900}};
+
+/*	=========================
+ *	Special Action Groups(SAGs)
+ *	=========================
+ *	These are functions that move particular elements of the robot. They are predefined
+ *	and each sequential function is to be formatted thusly:
+ *	int SAGn()
+ *	where n is the number of the SAG, numbered first to last in order of execution. It
+ *	returns a 1 if an error is likely, 0 if execution completed successfully, and -1 if
+ *	execution was known to fail.
+*/
+
+int SAG1()	{
+	//	Moves the lifts up
+	motor[ScissorLeft] = 100;
+	motor[ScissorRight] = 100;
+
+	while((nMotorEncoder[ScissorRight] < 2250)){};
+
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+
+	return 0;
+}
+
+int SAG2()	{
+	//	Moves the servo
+	servo[ArmContRot] = 255;
+	wait1Msec(1500);
+	servo[ArmContRot] = 126;
+
+	return 0;
+}
+
+int SAG3()	{
+	//	Moves the lifts down
+	motor[ScissorLeft] = -100;
+	motor[ScissorRight] = -100;
+
+	while((nMotorEncoder[ScissorRight] > 500)){};
+
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+
+	return 0;
+}
+
+//	Motor cycler
 
 tMotor mtrs[4] = {LeftRear, LeftFront, RightRear, RightFront};
 tMotor *mtr = mtrs;
+
+//	Global variables
 
 int nStep = 0;
 int i = 0;
 bool cont = true;
 bool mtrRunning[4] = {true, true, true, true};
 
-/*void selectMode()	{
+/*
+void selectMode()	{
 	nxtDisplayTextLine(1, "Select Mode");
 	nxtDisplayTextLine(2, "LEFT- left side");
 	nxtDisplayTextLine(3, "RIGHT- right side");
@@ -69,7 +132,8 @@ bool mtrRunning[4] = {true, true, true, true};
   }
 
   eraseDisplay();
-}*/
+}
+*/
 
 task main()
 {
@@ -82,8 +146,10 @@ task main()
 	nMotorEncoder[RightRear	] = 0;
 	nMotorEncoder[ScissorRight] = 0;
 
+	wait1Msec(8000);
+	beginNewTimer(5000);
+
 	while(nStep < nSTEPS)	{
-		beginNewTimer(5000);
 		motor[LeftRear	] = 50 * sgn(steps[nStep][0]);
 		motor[LeftFront	] = 50 * sgn(steps[nStep][1]);
 		motor[RightRear ] = 50 * sgn(steps[nStep][2]);
@@ -103,6 +169,7 @@ task main()
 			if(((!mtrRunning[0]) && (!mtrRunning[1]) && (!mtrRunning[2]) && (!mtrRunning[3])) || (getElapsed() <= 0))	{
 				cont = false;
 				endActiveTimer();
+				beginNewTimer(5000);
 			}
 		}
 		for(i = 0; i < 4; i++)	{
@@ -112,25 +179,11 @@ task main()
 		nStep++;
 		i = 0;
 	}
-	motor[ScissorLeft] = 100;
-	motor[ScissorRight] = 100;
 
-	while((nMotorEncoder[ScissorRight] < 2250)){};
-
-	motor[ScissorLeft] = 0;
-	motor[ScissorRight] = 0;
+	SAG1();
 
 	wait1Msec(1000);
 
-	servo[ArmContRot] = 255;
-	wait1Msec(1500);
-	servo[ArmContRot] = 126;
-
-	motor[ScissorLeft] = -100;
-	motor[ScissorRight] = -100;
-
-	while((nMotorEncoder[ScissorRight] > 500)){};
-
-	motor[ScissorLeft] = 0;
-	motor[ScissorRight] = 0;
+	SAG2();
+	SAG3();
 }
