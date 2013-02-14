@@ -138,6 +138,12 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	return true;
 }
 
+
+int readIRSeekerDist(tSensors IRSeeker, tIRSeek &ir)	{
+	float x = log10(ir.rawStrength);
+	ir.strength = ((int)(-3.-30185.87*pow(x, 4) + 2146340.6*pow(x, 3) + -5722508.6*pow(x, 2) + 6779042.4*x - 3010555));	//	world's longest regression function
+}
+
 int readLegoLight(tSensors LightSensor)	{
 	//	reads light sensor
 	return LSvalRaw(LightSensor);
