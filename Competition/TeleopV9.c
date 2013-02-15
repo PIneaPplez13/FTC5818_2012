@@ -67,9 +67,9 @@ int calcMotorPow(int joyValue, int maxMotorSpeed){
 }
 
 task tensionLift(){
-	motor[ScissorLeft] = 60;
+	motor[ScissorLeft] = 56;
 	motor[ScissorRight] = 60;
-	wait1Msec(750);
+	wait1Msec(1800);
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
 }
