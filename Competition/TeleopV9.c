@@ -83,7 +83,7 @@ void armControl(){
 	if(joy2Btn(RIGHT_BTN)){
 		servo[ArmContRot] = 255;
 
- 	}else if(joy2Btn(DOWN_BTN)){
+ 	}else if(joy2Btn(LEFT_BTN)){
  		servo[ArmContRot] = 0;
 
  	}else{
@@ -145,6 +145,10 @@ void hookDriveControl(int range){
 }
 
 void liftControl(int range, int joyValue1, int joyValue2){
+
+	if(joy2Btn(DOWN_BTN)){
+		tensionControl();
+	}
 
 	if((joyValue1 > 30) || (joyValue2 > 30)){
 		motor[ScissorLeft] = 92; //100
