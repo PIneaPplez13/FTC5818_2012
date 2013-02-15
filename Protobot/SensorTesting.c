@@ -14,5 +14,6 @@ task main()
 		nxtDisplayBigTextLine(1, "%i in", ir.rawStrength);
 		nxtDisplayTextLine(3, "EOPD dist");
 		nxtDisplayBigTextLine(4, "%i units", readEOPD(EOPD));
+		nxtDisplayTextLine(6, "%i", ir.dir);
 	}
 }

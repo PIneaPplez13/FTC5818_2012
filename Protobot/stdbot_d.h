@@ -123,15 +123,19 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	//	direction: ir.dir
 	//	raw strength: ir.rawStrength
 
+	HTIRS2setDSPMode(IRSeeker, DSP_1200);
+
 	_success = HTIRS2readAllACStrength(IRSeeker, ir._rawSensors[0], ir._rawSensors[1], ir._rawSensors[2], ir._rawSensors[3], ir._rawSensors[4]);
 
 	if(!_success)	{
+		writeDebugStreamLine("ERROR: stdbot: oh noes! HTIRS2readAllACStrength() call failed. Is the IRSeeker working?");
 		return false;
 	}
 
 	_success = HTIRS2readEnhanced(IRSeeker, ir.dir, ir.rawStrength);
 
 	if(!_success)	{
+		writeDebugStreamLine("ERROR: stdbot: oh noes! HTIRS2readEnhanced() call failed. Is the IRSeeker working?");
 		return false;
 	}
 
