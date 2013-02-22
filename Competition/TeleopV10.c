@@ -103,7 +103,7 @@ void tensionControl(){
 
 void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
 
-	int direction = (joyValueY / abs(joyValueY)
+	int direction = (joyValueY / abs(joyValueY));
 
 	if(abs(joyValueY) > 30){
 		if(joy2Btn(L2)){
@@ -126,7 +126,7 @@ void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
 void liftHatControl(int singleSpeed, int doubleSpeed){
 
 	if(joystick.joy2_TopHat == HAT_UP)
-		direction = 1;
+		int direction = 1;
 	else
 		direction = -1;
 
@@ -214,7 +214,7 @@ task main(){
 
 		liftControl(50, 100, joystick.joy2_y1); //singleSpeed, doubleSpeed, joystick
 		if(joystick.joy2_TopHat == HAT_UP || joystick.joy2_TopHat == HAT_DOWN)
-			liftHatControl(50, 100) //singleSpeed, doubleSpeed
+			liftHatControl(50, 100); //singleSpeed, doubleSpeed
 
 		//--- TENSION CONTROL
 
