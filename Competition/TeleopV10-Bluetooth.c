@@ -143,7 +143,7 @@ void liftHatControl(int singleSpeed, int doubleSpeed){
 		}
 }
 
-//--- ARM SERVO(S)
+//--- ARM SERVOS
 
 void delayServo(int delay_constant, int deltaOutput){
 
