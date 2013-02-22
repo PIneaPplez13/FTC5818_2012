@@ -17,9 +17,10 @@
 #pragma config(Servo,  srvo_S1_C4_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
 
-#include "JoystickDriver.c" //to handle Bluetooth messages
+//handle Bluetooth messages
+#include "JoystickDriver.c"
 
-//logitech controller mapping
+//logitech gamepad mapping
 #define    UP_BTN 4
 #define  DOWN_BTN 2
 #define  LEFT_BTN 1
@@ -30,27 +31,31 @@
 #define R1 5
 #define R2 7
 
+//lift motor synch constants
+#define  leftLiftCon 100
+#define rightLiftCon 100
+
 //NXT brick button mapping
 #define RIGHT 1
-#define LEFT 2
+#define  LEFT 2
 
-//we don't want the deadband to be too much
+//other useful shortcuts
 #define DEADBAND 10
 #define MAX_JOY_VALUE 127.0
+
+//--- INITIALIZATION
 
 void initializeRobot(){
 
 	//reset motor encoders on scissor lift motors
 	nMotorEncoder[ScissorLeft] = 0;
-	nMotorEncoder[ScissorRight] = 0;
+    nMotorEncoder[ScissorRight] = 0;
 
-  //initialize servo to starting position
-  servo[ArmContRot] = 126;
+    //initialize servo with no speed
+    servo[ArmContRot] = 126;
 }
 
-int motorOverload(int joyValue, ){
-
-}
+//--- GENERAL MOTOR CALCULATIONS
 
 int calcMotorPow(int joyValue, int maxMotorSpeed){
 
@@ -66,9 +71,33 @@ int calcMotorPow(int joyValue, int maxMotorSpeed){
 	return motorSpeed; //motor speed given to motor
 }
 
+//--- DRIVE MOTORS
+
+void moveLeftMotors(int motorSpeed){
+    //apply power to left drive motors
+    motor[LeftFront] = motorSpeed;
+    motor[LeftRear] = motorSpeed;
+}
+
+void moveRightMotors(int motorSpeed){
+    //apply power to right drive motors
+    motor[RightFront] = motorSpeed;
+    motor[RightRear] = motorSpeed;
+}
+
+void directDriveControl(int range, int joyValue1, int joyValue2){
+
+	//motor speed and direction is directly translated from joystick position
+	moveLeftMotors(calcMotorPow(joyValue1, range));
+	moveRightMotors(calcMotorPow(joyValue2, range));
+}
+
+//--- LIFT MOTORS
+
 task tensionLift(){
-	motor[ScissorLeft] = 56;
-	motor[ScissorRight] = 60;
+	//raise lift for a brief amount of time
+	motor[ScissorLeft] = 60 * leftLiftCon;
+	motor[ScissorRight] = 60 * rightLiftCon;
 	wait1Msec(1800);
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
@@ -77,6 +106,67 @@ task tensionLift(){
 void tensionControl(){
 	StartTask(tensionLift, 7);
 }
+
+void rightControl(int range, int joyValue1, int joyValue2){
+
+	if((joyValue1 > 30) || (joyValue2 > 30)){
+		motor[ScissorLeft] = 100 * leftLiftCon;
+
+	}else if((joyValue1 < -30) || (joyValue2 < -30)){
+
+		if(SensorValue(LiftTouchSensor) == 0)
+			motor[ScissorLeft] = -100 * leftLiftCon;
+		else motor[ScissorLeft] = 0;
+
+	}else{
+		motor[ScissorLeft] = 0;
+	}
+}
+
+void leftControl(int range, int joyValue1, int joyValue2){
+
+	if(joy2Btn(DOWN_BTN)){
+		tensionControl();
+	}
+
+	if((joyValue1 > 30) || (joyValue2 > 30)){
+		motor[ScissorRight] = 100 * rightLiftCon;
+
+	}else if((joyValue1 < -30) || (joyValue2 < -30)){
+
+		if(SensorValue(LiftTouchSensor) == 0)
+			motor[ScissorRight] = -100 * rightLiftCon;
+        else motor[ScissorRight] = 0;
+
+	}else{
+		motor[ScissorRight] = 0;
+	}
+}
+
+void liftControl(int range, int joyValue1, int joyValue2){
+
+
+	if((joyValue1 > 30) || (joyValue2 > 30)){
+		motor[ScissorLeft] = 100 * leftLiftCon;
+		motor[ScissorRight] = 100 * rightLiftCon;
+
+	}else if((joyValue1 < -30) || (joyValue2 < -30)){
+		if(SensorValue(LiftTouchSensor) == 0){
+			motor[ScissorLeft] = -100 * leftLiftCon;
+			motor[ScissorRight] = -100 * rightLiftCon;
+
+		}else{
+			motor[ScissorLeft] = 0;
+			motor[ScissorRight] = 0;
+		}
+
+	}else{
+		motor[ScissorLeft] = 0;
+		motor[ScissorRight] = 0;
+	}
+}
+
+//--- ARM SERVO(S)
 
 void armControl(){
 
@@ -91,125 +181,51 @@ void armControl(){
  	}
 }
 
-void directDriveControl(int range){
-
-	//motor speed and direction is directly translated from joystick position
-	motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range); //scale -range, +range
-	motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
-	motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
-	motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
-}
-
-void hookDriveControl(int range){
-
-	//motor speed is adjusted based on joystick direction
-	//motor direction is based on the assigned motor value that is farthest from 0
-	if(abs(joystick.joy1_y1) < abs(joystick.joy1_y2)){
-		int joyValue1 = (joystick.joy1_y1 / joystick.joy1_y2) * (joystick.joy1_y2 / abs(joystick.joy1_y2));
-
-		motor[LeftFront] = calcMotorPow(joyValue1, range);
-		motor[LeftRear]  = calcMotorPow(joyValue1, range);
-		motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
-		motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
-
-	}else if(abs(joystick.joy1_y2) > abs(joystick.joy1_y1)){
-		int joyValue2 = (joystick.joy1_y2 / joystick.joy1_y1) * (joystick.joy1_y1 / abs(joystick.joy1_y1));
-
-		motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
-		motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
-		motor[RightFront] = calcMotorPow(joyValue2, range);
-		motor[RightRear] = calcMotorPow(joyValue2, range);
-
-	}else{
-		if((joystick.joy1_y1 / joystick.joy1_y2) != 1){
-			if(joystick.joy1_y1 > 0){
-				motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
-				motor[LeftRear]  = calcMotorPow(joystick.joy1_y1, range);
-				motor[RightFront] = -calcMotorPow(joystick.joy1_y2, range);
-				motor[RightRear] = -calcMotorPow(joystick.joy1_y2, range);
-
-			}else{
-				motor[LeftFront] = -calcMotorPow(joystick.joy1_y1, range);
-				motor[LeftRear] = -calcMotorPow(joystick.joy1_y1, range);
-				motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
-				motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
-			}
-
-		}else{
-			motor[LeftFront] = calcMotorPow(joystick.joy1_y1, range);
-			motor[LeftRear] = calcMotorPow(joystick.joy1_y1, range);
-			motor[RightFront] = calcMotorPow(joystick.joy1_y2, range);
-			motor[RightRear] = calcMotorPow(joystick.joy1_y2, range);
-		}
-	}
-}
-
-void liftControl(int range, int joyValue1, int joyValue2){
-
-	if(joy2Btn(DOWN_BTN)){
-		tensionControl();
-	}
-
-	if((joyValue1 > 30) || (joyValue2 > 30)){
-		motor[ScissorLeft] = 92; //100
-		motor[ScissorRight] = 100;
-
-	}else if((joyValue1 < -30) || (joyValue2 < -30)){
-		if(SensorValue(LiftTouchSensor) == 0){
-			motor[ScissorLeft] = -92; //-100;
-			motor[ScissorRight] = -100;
-
-		}else{
-			motor[ScissorLeft] = 0;
-			motor[ScissorRight] = 0;
-		}
-
-	}else{
-		motor[ScissorLeft] = 0;
-		motor[ScissorRight] = 0;
-	}
-}
+//--- MAIN PROGRAM
 
 task main(){
 
 	initializeRobot();
-	waitForStart(); //comment whole line when testing and not running FCS
+	waitForStart(); //comment when not running FCS
 
-	while(true){
+    while(true){
 
-		getJoystickSettings(joystick); //get current joystick state with each update
+        //get current joystick state with each update
+		getJoystickSettings(joystick);
 
-	  //--- DRIVE MOTORS (Controller #1)
+//--- DRIVE MOTORS (Controller #1)
 
-	  if(joy1Btn(L1) || joy1Btn(R1)){       //when a modifier button is pressed
-	  	directDriveControl(50);
+        if(joy1Btn(L1) || joy1Btn(R1)){
+            directDriveControl(50, joystick.joy1_y1, joystick.joy1_y2);
 
-	  }else if(joy1Btn(L2) || joy1Btn(R2)){ //when a modifier button is pressed
-	  	directDriveControl(100);
+        }else if(joy1Btn(L2) || joy1Btn(R2)){
+            directDriveControl(100, joystick.joy1_y1, joystick.joy1_y2);
 
-	  }else{                                //default driving mode
-	  	directDriveControl(75);
-	  }
+        }else{ //default driving mode
+            directDriveControl(75, joystick.joy1_y1, joystick.joy1_y2);
+        }
 
-		//--- PULLEY LIFT (Controller #2)
+//--- PULLEY LIFT (Controller #2)
 
-		if(joy2Btn(L1) || joy2Btn(R1)){ //slow
-	  	liftControl(5, joystick.joy2_y1, joystick.joy2_y2);
+        if(joy2Btn(L1) || joy2Btn(L2)){ //left-side modifiers
+            leftControl(100, joystick.joy2_y1, joystick.joy2_y2);
 
-	  }else if(joy2Btn(L2) || joy2Btn(R2)){ //fast
-	  	liftControl(100, joystick.joy2_y1, joystick.joy2_y2);
+        }else if(joy2Btn(R1) || joy2Btn(R2)){ //right-side modifiers
+            rightControl(100, joystick.joy2_y1, joystick.joy2_y2);
 
-	  }else{
-	  	liftControl(50, joystick.joy2_y1, joystick.joy2_y2); //default
-	  }
+        }else{ //default lifting mode
+            liftControl(50, joystick.joy2_y1, joystick.joy2_y2);
+        }
 
-	  if(SensorValue(LiftTouchSensor) == 1){
-	  	tensionControl();
-	  }
+//--- TENSION CONTROL
 
-	  //--- ARM CONTROL (Controller #2)
+        if((SensorValue(LiftTouchSensor) == 1) || (joy2Btn(DOWN_BTN))){
+            tensionControl();
+        }
 
-	  armControl();
 
+//--- ARM CONTROL (Controller #2)
+
+        armControl();
 	}
 }
