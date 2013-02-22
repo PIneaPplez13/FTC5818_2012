@@ -11,12 +11,16 @@ n		Rev 	Date		Notes
 2		0.0		1/14/12	Added screen drawing/file i/o
 3		0.1		1/15/12	Added pdf/cdf
 4		0.2		1/19/12	Added scalers and readUltrasonic changed to return distance in inches, added readUltrasonicRaw to return raw val
+5		0.3		2/15/13	Adding IRSeeker regression functions
+7		0.4		2/18/13	Begun DMM
+8		0.5		2/21/13 More work on DMM, moved to seperate file. Fixed IRSeeker regression functions, somewhat.
 */
 
 #ifndef STDBOT_H
 #define STDBOT_H
 
 #define DEBUG true
+#define STDBOT_VERSION 0.5
 
 //	includes =============================================
 #include "hitechnic-eopd.h"
@@ -42,10 +46,6 @@ bool _success = true;
 //	timer
 bool _end = false;
 volatile int _msecs = 0;
-
-//	scaler
-//int iscale = 0;
-//float fscale = 0.0;
 
 //	file i/o
 TFileHandle file;
@@ -74,16 +74,17 @@ task timer()	{
 }
 
 //	functions ============================================
-
 //	SCALE FUNCS
 
 int Map(int val, int lo, int hi, int rlo, int rhi)	{
+	//	maps integer val of low lo and high hi to a range of rlo and rhi.
 	val -= lo;
 	val = ((((float)val/(hi-lo))*(rhi-rlo)) + rlo);
 	return val;
 }
 
 float Map(float val, float lo, float hi, float rlo, float rhi)	{
+	//	maps float val of low lo and high hi to a range of rlo and rhi.
 	val -= lo;
 	val = (((val/(hi-lo))*(rhi-rlo)) + rlo);
 	return val;
@@ -108,13 +109,19 @@ int readEOPD(tSensors EOPD)	{
 }
 
 int readIRSeekDir(tSensors IRSeeker)	{
-	//	reads IR seeker
+	//	reads IR seeker direction
 	return HTIRS2readACDir(IRSeeker);
 }
 
 void readIRSeekDir(tSensors IRSeeker, tIRSeek &ir)	{
-	//	reads IR seeker and stores it into ir.dir
+	//	reads IR seeker direction and stores it into ir.dir
 	ir.dir = HTIRS2readACDir(IRSeeker);
+}
+
+void readIRSeekerDist(tIRSeek &ir)	{
+	//	reads the actual distance in inches from the IRSeeker.
+	//	WARNING! Distances below 12 inches will NOT return the correct value!
+	ir.strength = -0.00681066*ir.rawStrength + 1.9035848;
 }
 
 bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
@@ -122,6 +129,7 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	//	spits out direction and strength info into tIRSeek ir
 	//	direction: ir.dir
 	//	raw strength: ir.rawStrength
+	//	strength: ir.strength
 
 	HTIRS2setDSPMode(IRSeeker, DSP_1200);
 
@@ -139,13 +147,9 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 		return false;
 	}
 
+	readIRSeekerDist(ir);
+
 	return true;
-}
-
-
-void readIRSeekerDist(tSensors IRSeeker, tIRSeek &ir)	{
-	float x = log10(ir.rawStrength);
-	ir.strength = (-3.-30185.87*pow(x, 4) + 2146340.6*pow(x, 3) + -5722508.6*pow(x, 2) + 6779042.4*x - 3010555);	//	world's longest regression function
 }
 
 int readLegoLight(tSensors LightSensor)	{
@@ -166,7 +170,7 @@ int readUltrasonic(tSensors US)	{
 //	PROBABIlITY FUNCS
 
 float normPDF(float z, float mu, float sigma)	{
-	//	Calculates probability z in normal curve
+	//	Calculates probability z in a normal curve with mean mu and standard deviation sigma
 	if(z < mu)	{
 		return Phi(z, mu, sigma)/2.0;
 	}
@@ -177,7 +181,7 @@ float normPDF(float z, float mu, float sigma)	{
 }
 
 float normCDF(float z, float mu, float sigma)	{
-	//	Calculates probability z in cumulative normal curve
+	//	Calculates probability z in a cumulative normal curve with mean mu and standard deviation sigma
 	return Phi(z, mu, sigma);
 }
 

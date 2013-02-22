@@ -59,6 +59,21 @@ task timer()	{
 }
 
 //	functions ============================================
+//	SCALE FUNCS
+
+int Map(int val, int lo, int hi, int rlo, int rhi)	{
+	//	maps integer val of low lo and high hi to a range of rlo and rhi.
+	val -= lo;
+	val = ((((float)val/(hi-lo))*(rhi-rlo)) + rlo);
+	return val;
+}
+
+float Map(float val, float lo, float hi, float rlo, float rhi)	{
+	//	maps float val of low lo and high hi to a range of rlo and rhi.
+	val -= lo;
+	val = (((val/(hi-lo))*(rhi-rlo)) + rlo);
+	return val;
+}
 
 //	SENSOR FUNCS
 
@@ -79,13 +94,19 @@ int readEOPD(tSensors EOPD)	{
 }
 
 int readIRSeekDir(tSensors IRSeeker)	{
-	//	reads IR seeker
+	//	reads IR seeker direction
 	return HTIRS2readACDir(IRSeeker);
 }
 
 void readIRSeekDir(tSensors IRSeeker, tIRSeek &ir)	{
-	//	reads IR seeker and stores it into ir.dir
+	//	reads IR seeker direction and stores it into ir.dir
 	ir.dir = HTIRS2readACDir(IRSeeker);
+}
+
+void readIRSeekerDist(tIRSeek &ir)	{
+	//	reads the actual distance in inches from the IRSeeker.
+	//	WARNING! Distances below 12 inches will NOT return the correct value!
+	ir.strength = -0.00681066*ir.rawStrength + 1.9035848;
 }
 
 bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
@@ -93,35 +114,25 @@ bool readIRSeeker(tSensors IRSeeker, tIRSeek &ir)	{
 	//	spits out direction and strength info into tIRSeek ir
 	//	direction: ir.dir
 	//	raw strength: ir.rawStrength
+	//	strength: ir.strength
 
-	readIRSeekDir(IRSeeker, ir);
+	HTIRS2setDSPMode(IRSeeker, DSP_1200);
 
 	_success = HTIRS2readAllACStrength(IRSeeker, ir._rawSensors[0], ir._rawSensors[1], ir._rawSensors[2], ir._rawSensors[3], ir._rawSensors[4]);
 
 	if(!_success)	{
+		writeDebugStreamLine("ERROR: stdbot: oh noes! HTIRS2readAllACStrength() call failed. Is the IRSeeker working?");
 		return false;
 	}
 
-	_largest = 0;
-	_nextLargest = 0;
+	_success = HTIRS2readEnhanced(IRSeeker, ir.dir, ir.rawStrength);
 
-	for(int i = 0; i < 5; i++)	{
-		if(ir._rawSensors[i] > _largest)	{
-			_largest = ir._rawSensors[i];
-		}
-	}
-	for(int i = 0; i < 5; i++)	{
-		if((ir._rawSensors[i] > _nextLargest) && (ir._rawSensors[i] != _largest))	{
-			_nextLargest = ir._rawSensors[i];
-		}
+	if(!_success)	{
+		writeDebugStreamLine("ERROR: stdbot: oh noes! HTIRS2readEnhanced() call failed. Is the IRSeeker working?");
+		return false;
 	}
 
-	if((_largest - _nextLargest) < 126 && ((_largest > 126) || (_nextLargest > 126)))	{
-		ir.rawStrength = (_largest - _nextLargest) * 2;
-	}
-	else	{
-		ir.rawStrength = _largest;
-	}
+	readIRSeekerDist(ir);
 
 	return true;
 }
@@ -131,15 +142,20 @@ int readLegoLight(tSensors LightSensor)	{
 	return LSvalRaw(LightSensor);
 }
 
-int readUltrasonic(tSensors US)	{
+int readUltrasonicRaw(tSensors US)	{
 	//	reads ultrasonic distance
 	return USreadDist(US);
+}
+
+int readUltrasonic(tSensors US)	{
+	//	reads distance in inches
+	return (-6.504+(.5171*USreadDist(US)));
 }
 
 //	PROBABIlITY FUNCS
 
 float normPDF(float z, float mu, float sigma)	{
-	//	Calculates probability z in normal curve
+	//	Calculates probability z in a normal curve with mean mu and standard deviation sigma
 	if(z < mu)	{
 		return Phi(z, mu, sigma)/2.0;
 	}
@@ -150,7 +166,7 @@ float normPDF(float z, float mu, float sigma)	{
 }
 
 float normCDF(float z, float mu, float sigma)	{
-	//	Calculates probability z in cumulative normal curve
+	//	Calculates probability z in a cumulative normal curve with mean mu and standard deviation sigma
 	return Phi(z, mu, sigma);
 }
 
@@ -160,7 +176,6 @@ void beginNewTimer(int ms)	{
 	//	starts a new timer
 	//	only one can be active at a time, _msecs should be considered volatile
 	_msecs = ms;
-	_end = false;
 	StartTask(timer, 8);
 }
 
@@ -174,5 +189,4 @@ int getElapsed()	{
 	//	warning! _msecs should be considered volatile
 	return _msecs;
 }
-
 #endif
