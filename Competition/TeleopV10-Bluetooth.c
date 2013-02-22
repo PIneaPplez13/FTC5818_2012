@@ -192,7 +192,7 @@ void armArtControl(int &output){
 task main(){
 
 	initializeRobot();
-	waitForStart();
+	//waitForStart();
 
 	while(true){
 
