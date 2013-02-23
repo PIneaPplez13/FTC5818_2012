@@ -153,21 +153,20 @@ void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
 
 void liftHatControl(int singleSpeed, int doubleSpeed){
 
-	if(joystick.joy2_TopHat == HAT_UP)
+	if(joystick.joy2_TopHat == HAT_UP)	{
 		int direction = 1;
-	else
+	}else	{
 		direction = -1;
+	}
 
 	if(joy2Btn(L2)){
-			motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
-
-		}else if(joy2Btn(R2)){
-			motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
-
-		}else{
-			motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
-			motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
-		}
+		motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
+	}else if(joy2Btn(R2)){
+		motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+	}else{
+		motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
+		motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+	}
 }
 
 //--- ARM SERVO(S)
@@ -203,11 +202,11 @@ void armArtControl(int &output){
 
 	if(joystick.joy2_x2 > DEADBAND_B || joystick.joy2_TopHat == HAT_RIGHT){
 		delayServo(1, 3);
-		if(output > 255) output = 255;
+		if(output > 255) {output = 255;}
 
 	}else if(joystick.joy2_x2 < -DEADBAND_B || joystick.joy2_TopHat == HAT_LEFT){
 		delayServo(1, -3);
-		if(output < 0) output = 0;
+		if(output < 0) {output = 0;}
 
 	}else{
 		output = output;
@@ -241,8 +240,9 @@ task main(){
 		//--- PULLEY LIFT (Controller #2)
 
 		liftControl(50, 100, joystick.joy2_y1); //singleSpeed, doubleSpeed, joystick
-		if(joystick.joy2_TopHat == HAT_UP || joystick.joy2_TopHat == HAT_DOWN)
+		if(joystick.joy2_TopHat == HAT_UP || joystick.joy2_TopHat == HAT_DOWN)	{
 			liftHatControl(50, 100); //singleSpeed, doubleSpeed
+		}
 
 		//--- TENSION CONTROL
 
