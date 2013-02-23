@@ -30,15 +30,14 @@
 	to keep the method of having seperate "drive system" and "fine movement" controlling in practice.
 
 	~ Updated Revision History ~
-
   n:   Rev:   Date: 	    Notes:
-	3 	 -      12/26/12    First stable version release
-	4    v4.0	  12/31/12	  Used in qualifying competition
+	3 	 -      12/26/12    First stable version released
+	4    v4.0	  12/31/12	  Used in qualifying competition (Jan 06 '13)
 	6	   v5 	  01/15/13	  -
 	4	   v5.1	  01/17/13	  Much error handling
 	7	   v6 	  01/25/13	  Greater control over arm is achieved
-	8	   v7 	  02/01/13	  Universal constants properly integrated into program; drive system troubleshooted
-	11   v7.3   02/02/13    Used in second qualifying competition
+	8	   v7 	  02/01/13	  Universal constants integrated into program; drive system troubleshooted
+	11   v7.3   02/02/13    Used in second qualifying competition (Feb 02 '13)
 	15	 v9 	  02/15/13	  Multiplexer is reconfigured; tension control functions are implemented
 	17 	 v9.9	  02/21/13	  -
 	18	 v10	  02/22/13	  Simplified code greatly; new gamepad mapping
@@ -89,10 +88,10 @@ int calcMotorPow(int joyValue, int maxMotorSpeed){
 	if(abs(joyValue) < DEADBAND){
 		return 0;
 	}
+
 	float ratio = pow(joyValue, 2) / pow(MAX_JOY_VALUE, 2);
 	int motorSpeed = (ratio * maxMotorSpeed) * (joyValue / abs(joyValue));
-
-	return motorSpeed; //motor speed given to motor
+	return motorSpeed;
 }
 
 //--- DRIVE MOTORS
@@ -107,11 +106,9 @@ void moveRightMotors(int motorSpeed){
 	motor[RightRear] = motorSpeed;
 }
 
-void directDriveControl(int range, int joyValue1, int joyValue2){
-
-	//motor speed and direction is directly translated from joystick position
-	moveLeftMotors(calcMotorPow(joyValue1, range));
-	moveRightMotors(calcMotorPow(joyValue2, range));
+void directDriveControl(int range, int joyValueY1, int joyValueY2){
+	moveLeftMotors(calcMotorPow(joyValueY1, range));
+	moveRightMotors(calcMotorPow(joyValueY2, range));
 }
 
 //--- LIFT MOTORS
@@ -130,19 +127,18 @@ void tensionControl(){
 }
 
 void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
-
-	int direction = (joyValueY / abs(joyValueY));
+	int dir = (joyValueY / abs(joyValueY));
 
 	if(abs(joyValueY) > 30){
 		if(joy2Btn(L2)){
-			motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
+			motor[ScissorLeft] = singleSpeed * dir * LEFT_LIFT_CON;
 
 		}else if(joy2Btn(R2)){
-			motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+			motor[ScissorRight] = singleSpeed * dir * RIGHT_LIFT_CON;
 
 		}else{
-			motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
-			motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+			motor[ScissorLeft] = doubleSpeed * dir * LEFT_LIFT_CON;
+			motor[ScissorRight] = doubleSpeed * dir * RIGHT_LIFT_CON;
 		}
 
 	}else{
@@ -153,19 +149,21 @@ void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
 
 void liftHatControl(int singleSpeed, int doubleSpeed){
 
-	if(joystick.joy2_TopHat == HAT_UP)	{
-		int direction = 1;
-	}else	{
-		direction = -1;
+	int dir = 1;
+
+	if(joystick.joy2_TopHat == HAT_UP){
+		dir = 1;
+	}else{
+		dir = -1;
 	}
 
 	if(joy2Btn(L2)){
-		motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
+		motor[ScissorLeft] = singleSpeed * dir * LEFT_LIFT_CON;
 	}else if(joy2Btn(R2)){
-		motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+		motor[ScissorRight] = singleSpeed * dir * RIGHT_LIFT_CON;
 	}else{
-		motor[ScissorLeft] = doubleSpeed * direction * LEFT_LIFT_CON;
-		motor[ScissorRight] = doubleSpeed * direction * RIGHT_LIFT_CON;
+		motor[ScissorLeft] = doubleSpeed * dir * LEFT_LIFT_CON;
+		motor[ScissorRight] = doubleSpeed * dir * RIGHT_LIFT_CON;
 	}
 }
 
@@ -202,11 +200,15 @@ void armArtControl(int &output){
 
 	if(joystick.joy2_x2 > DEADBAND_B || joystick.joy2_TopHat == HAT_RIGHT){
 		delayServo(1, 3);
-		if(output > 255) {output = 255;}
+		if(output > 255){
+			output = 255;
+		}
 
 	}else if(joystick.joy2_x2 < -DEADBAND_B || joystick.joy2_TopHat == HAT_LEFT){
 		delayServo(1, -3);
-		if(output < 0) {output = 0;}
+		if(output < 0){
+			output = 0;
+		}
 
 	}else{
 		output = output;
@@ -222,7 +224,6 @@ task main(){
 
 	while(true){
 
-		//get current joystick state with each update
 		getJoystickSettings(joystick);
 
 		//--- DRIVE MOTORS (Controller #1)
@@ -233,14 +234,14 @@ task main(){
 		}else if(joy1Btn(L2) || joy1Btn(R2)){
 			directDriveControl(100, joystick.joy1_y1, joystick.joy1_y2);
 
-		}else{ //default driving mode
+		}else{
 			directDriveControl(70, joystick.joy1_y1, joystick.joy1_y2);
 		}
 
 		//--- PULLEY LIFT (Controller #2)
 
 		liftControl(50, 100, joystick.joy2_y1); //singleSpeed, doubleSpeed, joystick
-		if(joystick.joy2_TopHat == HAT_UP || joystick.joy2_TopHat == HAT_DOWN)	{
+		if(joystick.joy2_TopHat == HAT_UP || joystick.joy2_TopHat == HAT_DOWN){
 			liftHatControl(50, 100); //singleSpeed, doubleSpeed
 		}
 
