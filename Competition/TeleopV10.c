@@ -17,6 +17,33 @@
 #pragma config(Servo,  srvo_S1_C4_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
 
+/*
+	FTC TEAM 5818 "BOTTERING RAMS" 2012-2013 "Ring It Up!"
+
+	Written by Ethan Eymontt and Joe Quigley
+	~ The official 2013 Teleoperated round program ~
+
+	The teleoperated code begins by defining constants that affect gamepad mapping and motor sync
+	speeds. Each section before the main task is organized into sections that mainly cover the drive,
+	arm, and lift aspects of the robot. In the running task, the functions that handle those categories
+	are called. The gamepad input source is usually passed to each handle (i.e. control) function
+	to keep the method of having seperate "drive system" and "fine movement" controlling in practice.
+
+	~ Updated Revision History ~
+
+  n:   Rev:   Date: 	    Notes:
+	3 	 -      12/26/12    First stable version release
+	4    v4.0	  12/31/12	  Used in qualifying competition
+	6	   v5 	  01/15/13	  -
+	4	   v5.1	  01/17/13	  Much error handling
+	7	   v6 	  01/25/13	  Greater control over arm is achieved
+	8	   v7 	  02/01/13	  Universal constants properly integrated into program; drive system troubleshooted
+	11   v7.3   02/02/13    Used in second qualifying competition
+	15	 v9 	  02/15/13	  Multiplexer is reconfigured; tension control functions are implemented
+	17 	 v9.9	  02/21/13	  -
+	18	 v10	  02/22/13	  Simplified code greatly; new gamepad mapping
+*/
+
 #include "JoystickDriver.c"
 
 #define    UP_BTN 4
