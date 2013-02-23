@@ -28,10 +28,10 @@ task main(){
   while (true){
 
   	if(mode == 1){
-  		autonomousOne();
+  		//autonomousOne();
 
   	}else{
-  		autonomousTwo();
+  		//autonomousTwo();
   	}
   }
 }

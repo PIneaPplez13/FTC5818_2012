@@ -63,7 +63,7 @@
 #define  LEFT_LIFT_CON 100
 #define RIGHT_LIFT_CON 94
 
-#define DEADBAND 10
+#define   DEADBAND 10
 #define DEADBAND_B 45
 #define MAX_JOY_VALUE 127.0
 
