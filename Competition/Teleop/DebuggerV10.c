@@ -34,22 +34,15 @@
 #define  HAT_LEFT 6
 #define HAT_RIGHT 2
 
-#define  LEFT_LIFT_CON 100
-#define RIGHT_LIFT_CON 94
-
-#define   DEADBAND 10
-#define DEADBAND_B 45
 #define MAX_JOY_VALUE 127.0
-
-int output = 126;
 
 //number of debug options
 #define OPTIONS 3
 
 //NXT button codes
-#define LEFT 2
-#define RIGHT 1
-#define ORANGE 3
+#define    LEFT 2
+#define   RIGHT 1
+#define  ORANGE 3
 #define NO_BTN -1
 
 string components[OPTIONS];
@@ -92,8 +85,24 @@ int debugMenu(){
 
 task driveDebug(){
 	disableDiagnosticsDisplay();
+	eraseDisplay();
+	wait1Msec(1000);
 	while(nNxtButtonPressed == NO_BTN){
-
+		nxtDisplayCenteredTextLine(1, "L1: LeftFront");
+		nxtDisplayCenteredTextLine(2, "R1: RightFront");
+		nxtDisplayCenteredTextLine(3, "L2: LeftRear");
+		nxtDisplayCenteredTextLine(4, "R2: RightRear");
+		nxtDisplayCenteredTextLine(6, "Press any");
+		nxtDisplayCenteredTextLine(7, "button to exit");
+		if(joy1Btn(L1)){
+			motor[LeftFront] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+		}else if(joy1Btn(R1)){
+			motor[RightFront] = joystick.joy1_y2 * 100 / MAX_JOY_VALUE;
+		}else if(joy1Btn(L2)){
+			motor[LeftRear] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+		}else if(joy1Btn(R2)){
+			motor[RightRear] = joystick.joy1_y2 * 100 / MAX_JOY_VALUE;
+		}
 	}
 }
 
@@ -101,35 +110,95 @@ void driveTest(){
 	StartTask(driveDebug, 7);
 }
 
-//--- ARM TEST
+//--- LIFT TEST
 
-task armDebug(){
+task liftDebug(){
 	servo[ArmContRot] = 126;
   servo[BasketLeft] = 255;
   servo[BasketRight] = 255;
   disableDiagnosticsDisplay();
+  eraseDisplay();
+  wait1Msec(1000);
 	while(nNxtButtonPressed == NO_BTN){
-
-	}
-}
-
-void armTest(){
-	StartTask(armDebug, 7);
-}
-
-//--- LIFT TEST
-
-task liftDebug(){
-	nMotorEncoder[ScissorLeft] = 0;
-  nMotorEncoder[ScissorRight] = 0;
-  disableDiagnosticsDisplay();
-	while(nNxtButtonPressed == NO_BTN){
-
+		nxtDisplayCenteredTextLine(1, "L1: ScissorLeft");
+		nxtDisplayCenteredTextLine(2, "R1: ScissorRight");
+		nxtDisplayCenteredTextLine(3, "[]: both motors");
+		nxtDisplayCenteredTextLine(6, "Press any");
+		nxtDisplayCenteredTextLine(7, "button to exit");
+		if(joy1Btn(L1)){
+			motor[ScissorLeft] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+		}else if(joy1Btn(R1)){
+			motor[ScissorRight] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+		}else if(joystick.joy1_y1 > 15){
+			motor[ScissorLeft] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+			motor[ScissorRight] = joystick.joy1_y1 * 100 / MAX_JOY_VALUE;
+		}else{
+			motor[ScissorLeft] = 0;
+			motor[ScissorRight] = 0;
+		}
 	}
 }
 
 void liftTest(){
 	StartTask(liftDebug, 7);
+}
+
+//--- ARM TEST
+
+task armDebug(){
+	nMotorEncoder[ScissorLeft] = 0;
+  nMotorEncoder[ScissorRight] = 0;
+  disableDiagnosticsDisplay();
+  eraseDisplay();
+  wait1Msec(1000);
+	while(nNxtButtonPressed == NO_BTN){
+		nxtDisplayCenteredTextLine(1, "L1: Left servo");
+		nxtDisplayCenteredTextLine(2, "R1: Right servo");
+		nxtDisplayCenteredTextLine(3, "L2 || R2: both");
+		nxtDisplayCenteredTextLine(4, "[]: Continuous");
+		nxtDisplayCenteredTextLine(6, "Press any");
+		nxtDisplayCenteredTextLine(7, "button to exit");
+		if(joy1Btn(L1)){
+			if(joystick.joy2_x1 > 1){
+				servo[BasketLeft] = 255;
+			}
+			if(joystick.joy2_x1 < -1){
+				servo[BasketLeft] = 0;
+			}
+		}else if(joy1Btn(R1)){
+			if(joystick.joy2_x2 > 1){
+				servo[BasketRight] = 255;
+			}
+			if(joystick.joy2_x2 < -1){
+				servo[BasketRight] = 0;
+			}
+		}else if(joy1Btn(L2) || joy1Btn(R2)){
+			if(joystick.joy2_x1 > 1){
+				servo[BasketLeft] = 255;
+				servo[BasketRight] = 255;
+			}
+			if(joystick.joy2_x1 < -1){
+				servo[BasketLeft] = 0;
+				servo[BasketRight] = 0;
+			}
+		}else{
+			servo[BasketLeft] = 126;
+			servo[BasketRight] = 126;
+		}
+		if(!((joy1Btn(L1) && joy1Btn(R1)) && (joy1Btn(L2) && joy1Btn(R2)))){
+			if(joystick.joy1_y1 > 1){
+				servo[ArmContRot] = 0;
+			}else if(joystick.joy1_y1 < -1){
+				servo[ArmContRot] = 255;
+			}else{
+				servo[ArmContRot] = 126;
+			}
+		}
+	}
+}
+
+void armTest(){
+	StartTask(armDebug, 7);
 }
 
 //--- MAIN PROGRAM
