@@ -139,7 +139,7 @@ bool runMotors(int** encoderArr, int msecs)	{
 	beginNewTimer(msecs);
 	for(int x = 0; x < nSteps; x++)	{
 		for(int y = 0; y < 4; y++)	{
-			motor[mtrs[y]] = encoderArr[x][y];
+			motor[mtrs[y]] = (*(encoderArr+x))[y];
 			if(getElapsed() > 0)	{
 				return false;
 			}
