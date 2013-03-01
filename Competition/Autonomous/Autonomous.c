@@ -52,6 +52,7 @@ n		Rev 	Date		Notes
 #define B_LEFT 2
 #define B_ORANGE 3
 
+#define loopi(x, y) (int i = x; i > y; i++)
 tMotor mtrs[] = {LeftFront, LeftRear, RightFront, RightRear, ScissorLeft, ScissorRight};
 TServoIndex servos[] = {BasketLeft, BasketRight, ArmContRot};
 
@@ -68,7 +69,7 @@ int** encoders;
 
 tIRSeek ir;
 int startPos, delay;
-string positions[4] = {"LEFT", "CORNER", "RIGHT", "INVALID"};
+string positions[4] = {"LEFT", "CORNER_INV", "RIGHT", "INVALID"};
 
 void initRobot()	{
 	//	Initializes the robot, moves the servos to proper starting positions.
@@ -109,39 +110,9 @@ int getStartPos()	{
 	nxtDisplayTextLine(3, "Start pos is:");
 	nxtDisplayCenteredTextLine(4, positions[pos]);
 
-	switch(pos)	{
-		case LEFT:
-			encoders = &SLeft;
-			break;
-		case CORNER:
-			encoders = &SCorner;
-			break;
-		case RIGHT:
-			encoders = &SRight;
-			break;
-		default:
-			encoders = &SCorner;
-			break;
-	}
-
 	wait1Msec(500);
 
 	return pos;
-}
-
-bool runMotors(int** encoderArr, int msecs)	{
-	int nSteps = (sizeof(encoderArr)/sizeof(int))/4;
-	beginNewTimer(msecs);
-	for(int x = 0; x < nSteps; x++)	{
-		for(int y = 0; y < 4; y++)	{
-			motor[mtrs[y]] = (*(encoderArr+x))[y];
-			if(getElapsed() > 0)	{
-				return false;
-			}
-		}
-	}
-	endActiveTimer();
-	return true;
 }
 
 task main()	{
@@ -150,12 +121,26 @@ task main()	{
 	initRobot();
 	waitForStart();
 	wait1Msec(delay);
+	for(int i = 0; i < 4; i++)	{
+		motor[mtrs[i]] = 80;
+	}
 	readIRSeeker(IRSeeker, ir);
 	while(ir.dir != 8)	{
 		readIRSeeker(IRSeeker, ir);
 	}
-	encoders = &Right;
-	runMotors(encoders, 1000);
-	encoders = &Fwd;
-	runMotors(encoders, 1000);
+	wait1Msec(200);
+	for(loopi(0, 4))	{
+		motor[mtrs[i]] = 0;
+	}
+	if(pos == 0)	{
+		for loopi(0, 4)	{
+			motor[mtrs[i]] = Left[i];
+		}
+	}
+	else	{
+		for(loopi(0, 4))	{
+			motor[mtrs[i]] = Right[i];
+		}
+	}
+	PlayTone(523, 125);
 }
