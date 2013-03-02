@@ -65,8 +65,6 @@ int Left[] = {500, 			500, 			-500, 		-500};
 int Fwd[]	 = {500,			500,			500,			500};
 int Right[]= {-500,			-500,			500,			500};
 
-int** encoders;
-
 tIRSeek ir;
 int startPos, delay;
 string positions[4] = {"LEFT", "CORNER_INV", "RIGHT", "INVALID"};
@@ -125,22 +123,52 @@ task main()	{
 		motor[mtrs[i]] = 80;
 	}
 	readIRSeeker(IRSeeker, ir);
-	while(ir.dir != 8)	{
-		readIRSeeker(IRSeeker, ir);
+	if(startPos == 0)	{
+		while(ir.dir != 8)	{
+			readIRSeeker(IRSeeker, ir);
+		}
+	}
+	else	{
+		while(ir.dir != 8)	{
+			readIRSeeker(IRSeeker, ir);
+		}
 	}
 	wait1Msec(200);
-	for(loopi(0, 4))	{
+	for loopi(0, 4)	{
 		motor[mtrs[i]] = 0;
 	}
-	if(pos == 0)	{
+	if(startPos == 0)	{
 		for loopi(0, 4)	{
 			motor[mtrs[i]] = Left[i];
 		}
 	}
 	else	{
-		for(loopi(0, 4))	{
+		for loopi(0, 4)	{
 			motor[mtrs[i]] = Right[i];
 		}
 	}
+
+	motor[ScissorLeft] = 100;
+	motor[ScissorRight] = 100;
+
+	while((nMotorEncoder[ScissorRight] < 2250)){};
+
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+
+	wait1Msec(1000);
+
+	servo[ArmContRot] = 255;
+	wait1Msec(1500);
+	servo[ArmContRot] = 126;
+
+	motor[ScissorLeft] = -100;
+	motor[ScissorRight] = -100;
+
+	while((nMotorEncoder[ScissorRight] > 500)){};
+
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+
 	PlayTone(523, 125);
 }
