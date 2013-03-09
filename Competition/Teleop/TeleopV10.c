@@ -123,7 +123,7 @@ task tensionLift(){
 }
 
 void tensionControl(){
-	StartTask(tensionLift, 2);
+	StartTask(tensionLift, 7);
 }
 
 void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
