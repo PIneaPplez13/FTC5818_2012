@@ -69,6 +69,7 @@ int Right[]= {-100,			-100,			100,			100};
 
 tIRSeek ir;
 int startPos, delay;
+byte servoPos;
 string positions[4] = {"LEFT", "CORNER_INV", "RIGHT", "INVALID"};
 
 void initRobot()	{
