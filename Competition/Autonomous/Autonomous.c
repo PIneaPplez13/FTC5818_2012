@@ -17,7 +17,6 @@
 #pragma config(Servo,  srvo_S1_C4_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S1_C4_6,    servo6,               tServoNone)
-
 /*
 	FTC TEAM 5818 "BOTTERING RAMS" 2012-2013 "Ring it up!"
 
@@ -69,7 +68,6 @@ int Right[]= {-100,			-100,			100,			100};
 
 tIRSeek ir;
 int startPos, delay;
-byte servoPos;
 string positions[4] = {"LEFT", "CORNER_INV", "RIGHT", "INVALID"};
 
 void initRobot()	{
@@ -117,6 +115,7 @@ int getStartPos()	{
 }
 
 void printDiag()	{
+	//	Prints a replacement for the debug dialog on specific lines
 	nxtDisplayTextLine(0, "FTC Team 5818");
 	nxtDisplayTextLine(1, "Battery Voltage (v):");
 	nxtDisplayTextLine(2, "NXT %fv", (nAvgBatteryLevel/1000.0));
@@ -124,6 +123,7 @@ void printDiag()	{
 }
 
 task diag()	{
+	//	Continually prints dialog
 	while(true)	{
 		printDiag();
 		wait1Msec(50);
@@ -159,6 +159,9 @@ task main()	{
 	}
 	PlayTone(523, 50);
 	wait1Msec(500);
+
+	nMotorEncoder[LeftFront] = 0;
+
 	if(startPos == 0)	{
 		for loopi(0, 4)	{
 			motor[mtrs[i]] = Left[i];
@@ -170,7 +173,7 @@ task main()	{
 		}
 	}
 
-	wait1Msec(500);
+	while(abs(nMotorEncoder[LeftFront]) < 4000)	{};
 
 	for loopi(0, 4)	{
 		motor[mtrs[i]] = 0;
