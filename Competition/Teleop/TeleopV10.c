@@ -67,6 +67,21 @@
 #define DEADBAND_B 45
 #define MAX_JOY_VALUE 127.0
 
+//--- TENSION CONTROL
+
+task tensionLift(){
+
+	motor[ScissorLeft] = 60 * LEFT_LIFT_CON;
+	motor[ScissorRight] = 60 * RIGHT_LIFT_CON;
+	wait1Msec(1800);
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+}
+
+void tensionControl(){
+	StartTask(tensionLift, 7);
+}
+
 //--- INITIALIZATION
 
 int output = 126;
@@ -75,6 +90,8 @@ void initializeRobot(){
 
 	nMotorEncoder[ScissorLeft] = 0;
   nMotorEncoder[ScissorRight] = 0;
+
+  StopTask(tensionLift);
 
   servo[ArmContRot] = 126;
   servo[BasketLeft] = 255;
@@ -111,20 +128,7 @@ void directDriveControl(int range, int joyValueY1, int joyValueY2){
 	moveRightMotors(calcMotorPow(joyValueY2, range));
 }
 
-//--- LIFT MOTORS
-
-task tensionLift(){
-
-	motor[ScissorLeft] = 60 * LEFT_LIFT_CON;
-	motor[ScissorRight] = 60 * RIGHT_LIFT_CON;
-	wait1Msec(1800);
-	motor[ScissorLeft] = 0;
-	motor[ScissorRight] = 0;
-}
-
-void tensionControl(){
-	StartTask(tensionLift, 7);
-}
+//--- LIFT CONTROL
 
 void liftControl(int singleSpeed, int doubleSpeed, int joyValueY){
 	int dir = (joyValueY / abs(joyValueY));
