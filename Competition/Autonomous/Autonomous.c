@@ -1,6 +1,6 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  HTServo)
 #pragma config(Sensor, S2,     IRSeeker,       sensorI2CCustom)
-#pragma config(Sensor, S3,     EOPD,           sensorI2CCustom)
+#pragma config(Sensor, S3,     HTMUX,           sensorI2CCustom)
 #pragma config(Sensor, S4,     LiftTouchSensor, sensorTouch)
 #pragma config(Motor,  motorA,           ,             tmotorNXT, openLoop)
 #pragma config(Motor,  motorB,           ,             tmotorNXT, openLoop)
@@ -196,7 +196,7 @@ task main()	{
 	motor[ScissorLeft] = -100;
 	motor[ScissorRight] = -100;
 
-	while((nMotorEncoder[ScissorRight] > 500)){};
+	while((nMotorEncoder[ScissorRight] > 2250)){};
 
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
