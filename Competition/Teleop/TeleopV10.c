@@ -9,7 +9,7 @@
 #pragma config(Motor,  mtr_S1_C2_1,     RightRear,     tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C2_2,     RightFront,    tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     LeftRear,      tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C3_2,     LeftFront,     tmotorTetrix, openLoop, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C3_2,     LeftFront,      tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Servo,  srvo_S1_C4_1,    ArmContRot,           tServoContinuousRotation)
 #pragma config(Servo,  srvo_S1_C4_2,    BasketLeft,           tServoStandard)
 #pragma config(Servo,  srvo_S1_C4_3,    BasketRight,          tServoStandard)
@@ -20,7 +20,7 @@
 /*
 	FTC TEAM 5818 "BOTTERING RAMS" 2012-2013 "Ring It Up!"
 
-	Written by Ethan Eymontt and Joe Quigley
+	Written by Ethan Eymontt (see history; last erase will be deferred)
 	~ The official 2013 Teleoperated round program ~
 
 	The teleoperated code begins by defining constants that affect gamepad mapping and motor sync
