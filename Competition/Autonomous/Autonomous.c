@@ -51,6 +51,8 @@ n		Rev 	Date		Notes
 #define B_LEFT 2
 #define B_ORANGE 3
 
+#define EOPD msensor_S3_1
+
 //	papaya banana watermelon rhubarb
 #define loopi(x, y) (int i = x; i < y; i++)
 
@@ -192,6 +194,10 @@ task main()	{
 	servo[ArmContRot] = 0;
 	wait1Msec(1500);
 	servo[ArmContRot] = 126;
+
+	while(true)	{
+		nxtDisplayTextLine(5, "EOPD: %i", readEOPD(EOPD));
+	}
 
 	motor[ScissorLeft] = -100;
 	motor[ScissorRight] = -100;
