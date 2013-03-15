@@ -22,9 +22,9 @@
 
 	Written by Joe Quigley and Ethan Eymontt
 	~The official 2013 Autonomous round program~
-	Reads a 2d array of size [nSTEPS][4], where nSTEPS is the number of steps
-	The second dimension holds values for the 4 individual motors.
-	After execution, the lifts and servo are then operated.
+	Runs forward parallel to the tree until the IRSeeker finds the beacon in sector 8.
+	Then, turns to fact tree, moves up, moved EOPD to correct alignment, and finally
+	dispenses the ring.
 
 	Revisions:
 n		Rev 	Date		Notes
@@ -37,6 +37,7 @@ n		Rev 	Date		Notes
 7		2.2		2/23/13 Finalized code
 8		2.2		2/25/13	Fixed some strange error I was having with pointers.
 9		2.3		2/27/23 Changed the autonomous strategy
+10	2.4		3/15/23 Forked new version called AutonAlt, current now has accurate turning, failsafe, and EOPD support
 */
 
 #include "stdbot.h"
@@ -51,7 +52,7 @@ n		Rev 	Date		Notes
 #define B_LEFT 2
 #define B_ORANGE 3
 
-#define EOPD msensor_S3_1
+#define EOPD msensor_S3_4
 
 //	papaya banana watermelon rhubarb
 #define loopi(x, y) (int i = x; i < y; i++)
@@ -108,6 +109,11 @@ int getStartPos()	{
 		}
 	}
 	endActiveTimer();
+
+	if((pos != LEFT) || (pos != CORNER) || (pos != RIGHT))	{
+		pos = LEFT;
+	}
+
 	nxtDisplayTextLine(4, "Start pos is:");
 	nxtDisplayCenteredTextLine(5, positions[pos]);
 
@@ -184,7 +190,11 @@ task main()	{
 	motor[ScissorLeft] = 100;
 	motor[ScissorRight] = 100;
 
-	while(nMotorEncoder[ScissorRight] < 2250){};
+	beginNewTimer(1500);
+
+	while((nMotorEncoder[ScissorRight] < 2250) || (getElapsed() > 0)){};
+
+	endActiveTimer();
 
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
@@ -196,13 +206,17 @@ task main()	{
 	servo[ArmContRot] = 126;
 
 	while(true)	{
-		nxtDisplayTextLine(5, "EOPD: %i", readEOPD(EOPD));
+		nxtDisplayTextLine(6, "EOPD: %i", readEOPD(EOPD));
 	}
 
 	motor[ScissorLeft] = -100;
 	motor[ScissorRight] = -100;
 
-	while((nMotorEncoder[ScissorRight] > 2250)){};
+	beginNewTimer(1500);
+
+	while((nMotorEncoder[ScissorRight] > 2250) || (getElapsed() > 0)){};
+
+	endActiveTimer();
 
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
