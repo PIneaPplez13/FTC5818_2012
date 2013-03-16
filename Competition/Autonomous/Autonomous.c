@@ -38,6 +38,7 @@ n		Rev 	Date		Notes
 8		2.2		2/25/13	Fixed some strange error I was having with pointers.
 9		2.3		2/27/23 Changed the autonomous strategy
 10	2.4		3/15/23 Forked new version called AutonAlt, current now has accurate turning, failsafe, and EOPD support
+11	2.4		3/16/23 Scratch EOPD support... (469... 469... 469... 460..+9...)
 */
 
 #include "stdbot.h"
@@ -111,7 +112,7 @@ int getStartPos()	{
 	endActiveTimer();
 
 	if((pos != LEFT) || (pos != CORNER) || (pos != RIGHT))	{
-		pos = LEFT;
+		pos = RIGHT;
 	}
 
 	nxtDisplayTextLine(4, "Start pos is:");
@@ -144,7 +145,7 @@ task main()	{
 	startPos = getStartPos();
 	StartTask(diag, 9);
 	initRobot();
-	waitForStart();
+	//waitForStart();									//-----------------------------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	wait1Msec(delay);
 	for loopi(0, 4)	{
 		motor[mtrs[i]] = 80;
@@ -187,34 +188,48 @@ task main()	{
 		motor[mtrs[i]] = 0;
 	}
 
+	nMotorEncoder[ScissorRight] = 0;
+
 	motor[ScissorLeft] = 100;
 	motor[ScissorRight] = 100;
 
-	beginNewTimer(1500);
+	beginNewTimer(1000);
 
-	while((nMotorEncoder[ScissorRight] < 2250) || (getElapsed() > 0)){};
+	while((getElapsed() > 0)){};
 
 	endActiveTimer();
 
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
 
-	wait1Msec(1000);
+	wait1Msec(500);
+
+	for loopi(0, 4)	{
+		motor[mtrs[i]] = 80;
+	}
+
+	nMotorEncoder[LeftFront] = 0;
+
+	beginNewTimer(500);
+
+	while((getElapsed() > 0) && (abs(nMotorEncoder[LeftFront]) < 1000)){};
+
+	endActiveTimer();
+
+	for loopi(0, 4)	{
+		motor[mtrs[i]] = 0;
+	}
 
 	servo[ArmContRot] = 0;
 	wait1Msec(1500);
 	servo[ArmContRot] = 126;
 
-	while(true)	{
-		nxtDisplayTextLine(6, "EOPD: %i", readEOPD(EOPD));
-	}
-
 	motor[ScissorLeft] = -100;
 	motor[ScissorRight] = -100;
 
-	beginNewTimer(1500);
+	beginNewTimer(1000);
 
-	while((nMotorEncoder[ScissorRight] > 2250) || (getElapsed() > 0)){};
+	while((getElapsed() > 0)){};
 
 	endActiveTimer();
 
