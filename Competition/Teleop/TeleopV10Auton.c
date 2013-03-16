@@ -228,6 +228,8 @@ task main(){
 	initWriteMode("auton.txt", 1024, true);
 	initializeRobot();
 
+	waitForStart();
+
 	while(true){
 
 		getJoystickSettings(joystick);
