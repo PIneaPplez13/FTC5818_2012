@@ -144,7 +144,7 @@ task main()	{
 	startPos = getStartPos();
 	StartTask(diag, 9);
 	initRobot();
-	//waitForStart();
+	waitForStart();
 	wait1Msec(delay);
 	for loopi(0, 4)	{
 		motor[mtrs[i]] = 80;
