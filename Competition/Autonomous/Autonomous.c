@@ -111,10 +111,6 @@ int getStartPos()	{
 	}
 	endActiveTimer();
 
-	if((pos != LEFT) || (pos != CORNER) || (pos != RIGHT))	{
-		pos = RIGHT;
-	}
-
 	nxtDisplayTextLine(4, "Start pos is:");
 	nxtDisplayCenteredTextLine(5, positions[pos]);
 
@@ -145,8 +141,10 @@ task main()	{
 	startPos = getStartPos();
 	StartTask(diag, 9);
 	initRobot();
-	//waitForStart();									//-----------------------------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	waitForStart();									//-----------------------------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	wait1Msec(delay);
+	servo[BasketLeft] = 126;
+	servo[BasketRight] = 126;
 	for loopi(0, 4)	{
 		motor[mtrs[i]] = 80;
 	}
@@ -162,6 +160,7 @@ task main()	{
 			readIRSeeker(IRSeeker, ir);
 		}
 	}
+	wait1Msec(150);
 	PlayTone(523, 50);
 	for loopi(0, 4)	{
 		motor[mtrs[i]] = 0;
@@ -171,16 +170,16 @@ task main()	{
 
 	nMotorEncoder[LeftFront] = 0;
 
-	if(startPos == 0)	{
+	/*if(startPos == LEFT)	{
 		for loopi(0, 4)	{
-			motor[mtrs[i]] = Left[i];
+			motor[mtrs[i]] = Right[i]; //was Left[i]
 		}
 	}
-	else	{
+	else	{*/
 		for loopi(0, 4)	{
-			motor[mtrs[i]] = Right[i];
+			motor[mtrs[i]] = Left[i]; //was Right[i]1
 		}
-	}
+	//}
 
 	while(abs(nMotorEncoder[LeftFront]) < 4000)	{};
 
@@ -202,6 +201,20 @@ task main()	{
 	motor[ScissorLeft] = 0;
 	motor[ScissorRight] = 0;
 
+	wait1Msec(250);
+
+	motor[ScissorLeft] = -100;
+	motor[ScissorRight] = -100;
+
+	beginNewTimer(250);
+
+	while((getElapsed() > 0)){};
+
+	endActiveTimer();
+
+	motor[ScissorLeft] = 0;
+	motor[ScissorRight] = 0;
+
 	wait1Msec(500);
 
 	for loopi(0, 4)	{
@@ -210,7 +223,7 @@ task main()	{
 
 	nMotorEncoder[LeftFront] = 0;
 
-	beginNewTimer(500);
+	beginNewTimer(1000);
 
 	while((getElapsed() > 0) && (abs(nMotorEncoder[LeftFront]) < 1000)){};
 
@@ -227,7 +240,7 @@ task main()	{
 	motor[ScissorLeft] = -100;
 	motor[ScissorRight] = -100;
 
-	beginNewTimer(1000);
+	beginNewTimer(250);
 
 	while((getElapsed() > 0)){};
 
